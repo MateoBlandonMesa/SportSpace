@@ -1,0 +1,30 @@
+# Entorno y secretos
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Dependencias
+node_modules/
+dist/
+build/
+coverage/
+
+# IDE y SO
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker / Prisma
+*.db
+*.db-journal
+
+# Documentos locales (no van al remoto)
+*.docx
+*.doc
