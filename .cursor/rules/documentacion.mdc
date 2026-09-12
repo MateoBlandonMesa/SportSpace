@@ -1,0 +1,16 @@
+---
+description: Mantener README y requisitos (HU, RF, RNF, alcance, MVP) al día con cada cambio del proyecto.
+alwaysApply: true
+---
+
+# Documentación viva
+
+Cuando cambie alcance, autenticación, arquitectura, modelo de datos, HU, RF, RNF, Gherkin o el plan de trabajo, actualizar en el **mismo cambio**:
+
+1. `README.md` — visión, stack, decisiones, plan y MVP.
+2. `docs/requisitos.md` — HU, RF, RNF, alcance y MVP, más fila en control de cambios.
+3. `docs/gherkin/*.feature` — si cambian criterios de aceptación.
+
+La sigla correcta es **RNF** (requisitos no funcionales), no RNO.
+
+No dejar requisitos Must que el código ya no cumple, ni código de producto sin su HU/RF si entra al MVP.

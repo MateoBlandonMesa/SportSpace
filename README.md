@@ -31,6 +31,8 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/).
+
 ---
 
 ## Decisión de arquitectura (eficiente y segura)
@@ -89,6 +91,8 @@ La base de datos compartida del anteproyecto **sí aplica** aquí: un esquema Po
 | Auth | Login propio: correo + contraseña, JWT corto + refresh en cookie HttpOnly | No depende del tenant Microsoft UdeA ni de Gestión Informática. |
 | Entorno local | Docker Compose | Postgres + API + front reproducibles. |
 | Calidad | ESLint, Prettier, tests (Jest / Playwright) | Requisitos y regresiones medibles. |
+
+**Idioma:** la documentación del curso va en español. El código, la API y la base de datos van en **inglés** (identificadores, tablas, rutas, comentarios de implementación). Los textos de la interfaz que ve el usuario siguen en español.
 
 ### Modelo de datos (núcleo)
 
@@ -172,7 +176,7 @@ División inicial del equipo (ajustable):
 - Casos de uso del MVP: login, ver espacios, ver disponibilidad, solicitar, aprobar/rechazar, cancelar, ver mis reservas.
 - Fuera de alcance PI1 (explícito): pagos, app nativa, integración real con Portafolio/Sede Electrónica, IoT de canchas.
 
-**Entregable:** este README actualizado + lista de requisitos / casos de uso en `docs/requisitos.md`.
+**Entregable:** [docs/requisitos.md](docs/requisitos.md) (HU, RF, RNF, alcance y MVP) + [docs/gherkin/](docs/gherkin/) + este README.
 
 ### Fase 2 — Diseño y preparación técnica (semanas 5–6) ← fase actual
 
@@ -207,16 +211,16 @@ División inicial del equipo (ajustable):
 | Semana | Trabajo |
 | --- | --- |
 | 11 | Crear reserva `PENDING`; listar “mis reservas”; cancelar si aún no inicia |
-| 12 | Panel staff/admin: aprobar / rechazar con motivo; transición de estados |
-| 13 | Restricción SQL de solape, prueba de condición de carrera (dos POST simultáneos), mensajes de error claros |
+| 12 | Panel staff/admin: aprobar / rechazar con motivo; transiciones de estado; gestión de roles (HU-20) |
+| 13 | Restricción SQL de solape; dashboard de ocupación semanal (HU-19); prueba de condición de carrera |
 
 **Criterio de salida:** dos solicitudes al mismo espacio y horario no quedan ambas `APPROVED` (ni ambas `PENDING` si la política del MVP las bloquea al crear).
 
 ### Fase 5 — Pruebas, correcciones y pulido (semanas 14–15)
 
 - Pruebas unitarias de dominio (solape, transiciones de estado, autorización).
-- Pruebas de API (casos de uso del MVP).
-- Prueba E2E del flujo estudiante + flujo administrador.
+- Pruebas de API y E2E alineadas a los escenarios Gherkin en `docs/gherkin/`.
+- Prueba E2E del flujo estudiante + flujo administrador (incl. dashboard y cambio de rol).
 - Revisión de seguridad: secretos, headers, rate limit, roles en cada endpoint.
 - Ajustes de UI (estados vacíos, carga, errores) y rendimiento de la consulta de disponibilidad.
 
@@ -231,6 +235,8 @@ División inicial del equipo (ajustable):
 
 ## Alcance del MVP (PI1)
 
+Detalle normativo en [docs/requisitos.md](docs/requisitos.md) §§ 2–3. Resumen:
+
 Incluido:
 
 - Autenticación propia (registro/login `@udea.edu.co`) y roles.
@@ -238,6 +244,8 @@ Incluido:
 - Consulta de disponibilidad por espacio y fecha.
 - Solicitud, aprobación, rechazo y cancelación de reservas.
 - Prevención de solapes.
+- Dashboard de ocupación por espacio y semana (staff/admin).
+- Gestión de roles desde la aplicación (`ADMIN`).
 - Auditoría mínima de cambios de estado.
 
 No incluido en PI1:
@@ -259,7 +267,9 @@ SportSpace/
 ├── apps/
 │   ├── api/          # NestJS — módulos users, spaces, reservations
 │   └── web/          # React + Vite
-├── docs/             # requisitos, mockups, evidencias de pruebas
+├── docs/
+│   ├── requisitos.md           # HU, RF, RNF, alcance, MVP
+│   └── gherkin/                # escenarios de aceptación
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -275,7 +285,8 @@ Esta estructura se creará al iniciar la fase 2 de implementación. Hasta entonc
 2. Una solicitud se crea, se ve en “mis reservas” y cambia de estado por acción del administrador.
 3. Un conflicto de horario se rechaza de forma determinista (aplicación + restricción en PostgreSQL).
 4. Un estudiante no puede aprobar reservas ni editar espacios.
-5. Las pruebas del MVP quedan documentadas para la evaluación del curso.
+5. Staff ve ocupación por espacio y semana; un admin cambia roles sin tocar la BD.
+6. Las pruebas del MVP quedan documentadas (Gherkin) y ejecutadas para la evaluación del curso.
 
 ---
 

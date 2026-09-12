@@ -1,0 +1,19 @@
+---
+description: Code, database, APIs, and identifiers in English; documentation stays in Spanish.
+alwaysApply: true
+---
+
+# Language split
+
+Documentation (`README.md`, `docs/**`) is in **Spanish**.
+
+All programming is in **English**:
+
+- Source: files, folders, functions, variables, types, comments, logs, tests
+- Database: tables, columns, enums, indexes, migrations, Prisma models
+- HTTP: routes, DTO/JSON field names, OpenAPI
+- Git branches: `feat/…`, `fix/…` in English
+
+Examples: `User`, `spaceId`, `startsAt`, `PENDING`, `/reservations` — not `usuario`, `idEspacio`, `PENDIENTE`.
+
+UI copy visible to the user stays in Spanish. Map Spanish labels to English identifiers in code.
