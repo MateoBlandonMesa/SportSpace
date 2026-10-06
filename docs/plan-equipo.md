@@ -10,11 +10,11 @@ Hoy: fase 2 (aún no hay `apps/`). Primero un esqueleto común; después trabajo
 
 | Persona | Capa | HU Must | Carpetas que toca |
 | --- | --- | --- | --- |
-| **Dilan** | Auth, usuarios, seguridad, Docker, CI | HU-01–HU-04, HU-20 | `apps/api/src/auth`, `apps/api/src/users`, `docker-compose.yml`, CI |
-| **Carlos** | Espacios, disponibilidad, reservas, dashboard API | HU-05–HU-07, HU-09–HU-16, HU-19 | `apps/api/src/spaces`, `apps/api/src/availability`, `apps/api/src/reservations` |
+| **Dilan** | Espacios, disponibilidad, reservas, dashboard API | HU-05–HU-07, HU-09–HU-16, HU-19 | `apps/api/src/spaces`, `apps/api/src/availability`, `apps/api/src/reservations` |
+| **Carlos** | Auth, usuarios, seguridad, Docker, CI | HU-01–HU-04, HU-20 | `apps/api/src/auth`, `apps/api/src/users`, `docker-compose.yml`, CI |
 | **Mateo** | Frontend y E2E; integra PRs en `main` | Pantallas de todas las HU Must | `apps/web/**`, tests Playwright |
 
-**Should (si hay tiempo):** HU-08 filtros — Mateo (UI) + Carlos (query params).
+**Should (si hay tiempo):** HU-08 filtros — Mateo (UI) + Dilan (query params).
 
 Nadie edita las carpetas de otro en su rama. El esquema Prisma es de **todos**, pero solo se cambia en PRs cortos y acordados (ver §3).
 
@@ -46,7 +46,7 @@ Reglas:
 4. Antes del PR: `git fetch origin && git merge origin/main` (o rebase) y resolver conflictos en local.
 5. Review: al menos **una** persona que no sea el autor. Mateo confirma el merge a `main`.
 6. Tras merge, borrar la rama remota y abrir la siguiente desde `main` nuevo.
-7. No fusionar rama de Dilan **dentro** de la de Carlos (salvo que `main` ya tenga auth). La integración es `main`.
+7. No fusionar rama de Carlos **dentro** de la de Dilan (salvo que `main` ya tenga auth). La integración es `main`.
 
 ---
 
@@ -63,13 +63,26 @@ Hacer **en una sola sesión**, rama `feat/scaffold`, merge a `main` el mismo dí
 - Módulos Nest vacíos: `auth`, `users`, `spaces`, `availability`, `reservations`
 - Rutas React vacías: login, register, spaces, availability, my-reservations, admin
 
-**Contrato que deja Dilan en el scaffold (stubs):** `JwtAuthGuard` y `RolesGuard` exportados desde `AuthModule`, aunque todavía no validen de verdad. Carlos y Mateo no inventan otro auth.
+**Contrato que deja Carlos en el scaffold (stubs):** `JwtAuthGuard` y `RolesGuard` exportados desde `AuthModule`, aunque todavía no validen de verdad. Dilan y Mateo no inventan otro auth.
 
 ---
 
 ## 4. Trabajo en paralelo (después del scaffold)
 
-### Dilan — `feat/auth` y luego `feat/roles`
+### Dilan — `feat/spaces` → `feat/availability` → `feat/reservations` → `feat/occupancy`
+
+| Orden | Rama | Qué entrega | Depende de |
+| --- | --- | --- | --- |
+| 1 | `feat/spaces` | CRUD espacios, solo `STAFF`/`ADMIN`; listado activos | Scaffold; guards de Carlos en `main` (o stub) |
+| 2 | `feat/availability` | Reglas de horario, bloqueos, GET disponibilidad del día | `feat/spaces` en `main` |
+| 3 | `feat/reservations` | Crear `PENDING`, mis reservas, cancelar, aprobar/rechazar, transiciones, exclusión SQL | Auth + spaces + availability en `main` |
+| 4 | `feat/occupancy` | Dashboard semanal (API) | Reservas en `main` |
+
+**No toca:** login ni componentes de `apps/web` (Mateo consume su OpenAPI).
+
+Mientras Carlos termina auth, Dilan puede escribir servicios y tests de solape **sin HTTP**, y colgar los controllers cuando existan los guards.
+
+### Carlos — `feat/auth` y luego `feat/roles`
 
 | Orden | Rama | Qué entrega | Listo cuando |
 | --- | --- | --- | --- |
@@ -79,19 +92,6 @@ Hacer **en una sola sesión**, rama `feat/scaffold`, merge a `main` el mismo dí
 | Continuo | Docker/CI | `docker compose up` documentado; lint en PR | RNF-12 |
 
 **No toca:** pantallas React ni lógica de solapes.
-
-### Carlos — `feat/spaces` → `feat/availability` → `feat/reservations` → `feat/occupancy`
-
-| Orden | Rama | Qué entrega | Depende de |
-| --- | --- | --- | --- |
-| 1 | `feat/spaces` | CRUD espacios, solo `STAFF`/`ADMIN`; listado activos | Scaffold; guards de Dilan en `main` (o stub) |
-| 2 | `feat/availability` | Reglas de horario, bloqueos, GET disponibilidad del día | `feat/spaces` en `main` |
-| 3 | `feat/reservations` | Crear `PENDING`, mis reservas, cancelar, aprobar/rechazar, transiciones, exclusión SQL | Auth + spaces + availability en `main` |
-| 4 | `feat/occupancy` | Dashboard semanal (API) | Reservas en `main` |
-
-**No toca:** login ni componentes de `apps/web` (Mateo consume su OpenAPI).
-
-Mientras Dilan termina auth, Carlos puede escribir servicios y tests de solape **sin HTTP**, y colgar los controllers cuando existan los guards.
 
 ### Mateo — `feat/web-*`
 
@@ -129,10 +129,10 @@ No abrir `feat/roles` hasta que `feat/auth` esté en `main`.
 | Archivo / zona | Quién |
 | --- | --- |
 | `prisma/schema.prisma` | Cambio acordado en PR propio (`fix/schema-…`); avisar en el chat del equipo |
-| `apps/api/src/auth`, `users` | Dilan |
-| `apps/api/src/spaces`, `availability`, `reservations` | Carlos |
+| `apps/api/src/auth`, `users` | Carlos |
+| `apps/api/src/spaces`, `availability`, `reservations` | Dilan |
 | `apps/web` | Mateo |
-| `docker-compose.yml`, `.github` | Dilan |
+| `docker-compose.yml`, `.github` | Carlos |
 | `docs/**` | Quien cambie el requisito; el otro revisa |
 
 Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `main` y actualiza su rama.
@@ -143,12 +143,12 @@ Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `
 
 | Bloque | Dilan | Carlos | Mateo |
 | --- | --- | --- | --- |
-| Sesión 0 | Scaffold + Docker | Scaffold + Prisma | Scaffold + web shell |
-| Siguiente | `feat/auth` | Modelo + `feat/spaces` (con stub de guard) | `feat/web-shell` |
-| Luego | Guards + seed admin | `feat/availability` | `feat/web-auth` |
-| Luego | `feat/roles` (HU-20) | `feat/reservations` + exclusión | `feat/web-spaces` y calendario |
-| Luego | CI, rate limit | `feat/occupancy` (HU-19) | `feat/web-reservations` + admin |
-| Fase 5 | Tests API auth | Tests solape / carrera | E2E Gherkin |
+| Sesión 0 | Scaffold + Prisma | Scaffold + Docker | Scaffold + web shell |
+| Siguiente | Modelo + `feat/spaces` (con stub de guard) | `feat/auth` | `feat/web-shell` |
+| Luego | `feat/availability` | Guards + seed admin | `feat/web-auth` |
+| Luego | `feat/reservations` + exclusión | `feat/roles` (HU-20) | `feat/web-spaces` y calendario |
+| Luego | `feat/occupancy` (HU-19) | CI, rate limit | `feat/web-reservations` + admin |
+| Fase 5 | Tests solape / carrera | Tests API auth | E2E Gherkin |
 
 ---
 
