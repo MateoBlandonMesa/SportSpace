@@ -162,8 +162,8 @@ División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](d
 
 | Persona | Enfoque principal | Apoyo | Ramas típicas |
 | --- | --- | --- | --- |
-| Dilan Holguin | Backend: auth, usuarios, seguridad | Docker, CI | `feat/auth`, `feat/roles` |
-| Carlos Casas | Backend: espacios, disponibilidad, reservas | Modelo, anti-solape, dashboard API | `feat/spaces`, `feat/availability`, `feat/reservations`, `feat/occupancy` |
+| Dilan Holguin | Backend: espacios, disponibilidad, reservas | Modelo, anti-solape, dashboard API | `feat/spaces`, `feat/availability`, `feat/reservations`, `feat/occupancy` |
+| Carlos Casas | Backend: auth, usuarios, seguridad | Docker, CI | `feat/auth`, `feat/roles` |
 | Mateo Blandón | Frontend: consulta, solicitud, panel admin | E2E, merge a `main` | `feat/web-shell`, `feat/web-auth`, `feat/web-spaces`, `feat/web-reservations`, `feat/web-admin` |
 
 Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`. Primero `feat/scaffold` (los tres en una sesión).
