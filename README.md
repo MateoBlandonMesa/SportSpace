@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md).
 
 ---
 
@@ -158,13 +158,15 @@ Esto desbloquea la semana 7 sin tickets a Informática. El correo UdeA identific
 
 Metodología: **cascada con retroalimentación** al cierre de cada fase. Si una revisión cambia un requisito, se ajusta el diseño o el código **antes** de cerrar la fase siguiente.
 
-División inicial del equipo (ajustable):
+División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](docs/plan-equipo.md)):
 
-| Persona | Enfoque principal | Apoyo |
-| --- | --- | --- |
-| Integrante A | Backend: auth, usuarios, seguridad | Docker, CI |
-| Integrante B | Backend: espacios, disponibilidad, conflictos | Modelo de datos |
-| Integrante C | Frontend: consulta, solicitud, panel admin | Pruebas E2E |
+| Persona | Enfoque principal | Apoyo | Ramas típicas |
+| --- | --- | --- | --- |
+| Dilan Holguin | Backend: auth, usuarios, seguridad | Docker, CI | `feat/auth`, `feat/roles` |
+| Carlos Casas | Backend: espacios, disponibilidad, reservas | Modelo, anti-solape, dashboard API | `feat/spaces`, `feat/availability`, `feat/reservations`, `feat/occupancy` |
+| Mateo Blandón | Frontend: consulta, solicitud, panel admin | E2E, merge a `main` | `feat/web-shell`, `feat/web-auth`, `feat/web-spaces`, `feat/web-reservations`, `feat/web-admin` |
+
+Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`. Primero `feat/scaffold` (los tres en una sesión).
 
 ### Fase 1 — Análisis y requisitos (semanas 1–4)
 
@@ -269,6 +271,7 @@ SportSpace/
 │   └── web/          # React + Vite
 ├── docs/
 │   ├── requisitos.md           # HU, RF, RNF, alcance, MVP
+│   ├── plan-equipo.md          # ramas y reparto Dilan / Carlos / Mateo
 │   └── gherkin/                # escenarios de aceptación
 ├── docker-compose.yml
 ├── .env.example
