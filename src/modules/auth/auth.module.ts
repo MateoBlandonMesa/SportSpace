@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
@@ -10,11 +11,18 @@ import { ThrottlerModule } from '@nestjs/throttler';
   imports: [
     DatabaseModule,
     PassportModule,
-    JwtModule.register({
-      global: true, // Opcional, permite usar el JwtService sin reimportarlo en otros módulos si lo necesitas
-      secret: process.env.JWT_ACCESS_SECRET || 'super-secret-key',
-      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' },
-    } as any),
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('JWT_ACCESS_SECRET'),
+        signOptions: { 
+          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRATION') || '1m' 
+        } as any,
+      }),
+    }),
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // Ventana de tiempo: 1 minuto

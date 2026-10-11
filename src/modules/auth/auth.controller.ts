@@ -45,15 +45,24 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(
     @Req() req: Request & { user: { sub: string, email: string, role: string } },
     @Res({ passthrough: true }) response: Response,
   ) {
-    // Aquí ya puedes usar req.user.sub de forma segura si necesitas registrar el evento de salida
-    response.clearCookie('refreshToken', { path: '/api/v1/auth' });
+    // 1. Borrar el refreshToken de la base de datos usando el ID del usuario
+    await this.authService.logout(req.user.sub);
+
+    // 2. Limpiar la cookie asegurando que el path coincida exactamente
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/api/v1/auth',
+    });
+
     return { message: 'Sesión cerrada correctamente.' };
   }
 
