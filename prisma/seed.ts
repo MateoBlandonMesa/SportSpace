@@ -1,11 +1,14 @@
 import { PrismaClient, Role } from '@prisma/client';
 import * as argon2 from 'argon2';
 
+// npx prisma db seed --> para ejecucion inicial (no duplica registros)
+// npx prisma migrate reset --> para hacer update (borrar datos y volver a crear)
+
 const prisma = new PrismaClient();
 
 async function main() {
   const isProduction = process.env.NODE_ENV === 'production';
-  const adminEmail = process.env.ADMIN_EMAIL || (!isProduction ? 'helloadmin@udea.edu.co' : null);
+  const adminEmail = process.env.ADMIN_EMAIL || (!isProduction ? 'admin@udea.edu.co' : null);
   const adminPassword = process.env.ADMIN_PASSWORD || (!isProduction ? 'AdminPass123!' : null);
   if (!adminEmail || !adminPassword) {
     throw new Error('❌ En producción es obligatorio definir ADMIN_EMAIL y ADMIN_PASSWORD.');

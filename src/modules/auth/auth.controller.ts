@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, HttpCode, HttpStatus, UseGuards, Req} from '@nestjs/common';
 import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -32,7 +32,7 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
-      path: '/auth/refresh',
+      path: '/api/v1/auth',
     });
 
     return {
@@ -53,7 +53,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     // Aquí ya puedes usar req.user.sub de forma segura si necesitas registrar el evento de salida
-    response.clearCookie('refreshToken', { path: '/auth/refresh' });
+    response.clearCookie('refreshToken', { path: '/api/v1/auth' });
     return { message: 'Sesión cerrada correctamente.' };
   }
 
@@ -76,5 +76,6 @@ export class AuthController {
       adminUser: req.user,
     };
   }
+
 
 }
