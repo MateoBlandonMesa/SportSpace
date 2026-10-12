@@ -5,11 +5,12 @@ alwaysApply: true
 
 # Documentación viva
 
-Cuando cambie alcance, autenticación, arquitectura, modelo de datos, HU, RF, RNF, Gherkin o el plan de trabajo, actualizar en el **mismo cambio**:
+Cuando cambie alcance, autenticación, arquitectura, modelo de datos, HU, RF, RNF, Gherkin, plan de trabajo o un **endpoint HTTP**, actualizar en el **mismo cambio**:
 
 1. `README.md` — visión, stack, decisiones, plan y MVP.
 2. `docs/requisitos.md` — HU, RF, RNF, alcance y MVP, más fila en control de cambios.
 3. `docs/gherkin/*.feature` — si cambian criterios de aceptación.
+4. `docs/postman/SportSpace.postman_collection.json` — si cambia la API.
 
 La sigla correcta es **RNF** (requisitos no funcionales), no RNO.
 

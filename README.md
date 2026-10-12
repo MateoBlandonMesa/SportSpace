@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/).
 
 ---
 
@@ -274,7 +274,8 @@ SportSpace/
 ├── docs/
 │   ├── requisitos.md           # HU, RF, RNF, alcance, MVP
 │   ├── plan-equipo.md          # ramas y reparto Dilan / Carlos / Mateo
-│   └── gherkin/                # escenarios de aceptación
+│   ├── gherkin/                # escenarios de aceptación
+│   └── postman/                # colección Postman de la API
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -293,7 +294,8 @@ npm run dev:api
 npm run dev:web
 ```
 
-API: `http://localhost:3000/api/health` · Web: `http://localhost:5173`.
+API: `http://localhost:3000/api/health` · Web: `http://localhost:5173`.  
+Postman: importar `docs/postman/SportSpace.postman_collection.json`.
 
 ---
 
