@@ -4,6 +4,7 @@ import { AdminPage } from './pages/AdminPage';
 import { AvailabilityPage } from './pages/AvailabilityPage';
 import { LoginPage } from './pages/LoginPage';
 import { MyReservationsPage } from './pages/MyReservationsPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { SpacesPage } from './pages/SpacesPage';
 
@@ -19,6 +20,7 @@ export function App() {
         <Route path="/my-reservations" element={<MyReservationsPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Route>
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

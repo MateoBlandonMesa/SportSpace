@@ -54,3 +54,24 @@ a {
 .muted {
   color: #4d5c54;
 }
+
+.api-status {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.api-status--ok {
+  opacity: 1;
+}
+
+.feedback-state h1 {
+  margin-bottom: 0.4rem;
+}
+
+.error-text {
+  color: #8b1e1e;
+}
+
+.space-list {
+  padding-left: 1.2rem;
+}
