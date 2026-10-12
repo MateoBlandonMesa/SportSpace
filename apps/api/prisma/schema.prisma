@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum ReservationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AvailabilityKind {
+  WEEKLY_HOURS
+  BLOCK
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String
+  passwordHash  String
+  role          Role           @default(STUDENT)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  reservations  Reservation[]
+  auditLogs     AuditLog[]
+}
+
+model Space {
+  id                 String              @id @default(uuid())
+  name               String
+  type               String
+  campus             String
+  capacity           Int
+  usageRules         String
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  availabilityRules  AvailabilityRule[]
+  reservations       Reservation[]
+}
+
+model AvailabilityRule {
+  id        String           @id @default(uuid())
+  spaceId   String
+  space     Space            @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  kind      AvailabilityKind
+  dayOfWeek Int?
+  startTime String?
+  endTime   String?
+  startsAt  DateTime?
+  endsAt    DateTime?
+  reason    String?
+  createdAt DateTime         @default(now())
+
+  @@index([spaceId])
+}
+
+model Reservation {
+  id        String             @id @default(uuid())
+  spaceId   String
+  userId    String
+  space     Space              @relation(fields: [spaceId], references: [id])
+  user      User               @relation(fields: [userId], references: [id])
+  startsAt  DateTime
+  endsAt    DateTime
+  status    ReservationStatus  @default(PENDING)
+  reason    String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([spaceId, startsAt])
+  @@index([userId])
+  @@index([status])
+  // Overlap exclusion (PENDING/APPROVED) is added by Dilan on feat/reservations.
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  entityType String
+  entityId   String
+  fromValue  String?
+  toValue    String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+}

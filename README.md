@@ -166,7 +166,9 @@ División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](d
 | Carlos Casas | Backend: auth, usuarios, seguridad | Docker, CI | `feat/auth`, `feat/roles` |
 | Mateo Blandón | Frontend: consulta, solicitud, panel admin | E2E, merge a `main` | `feat/web-shell`, `feat/web-auth`, `feat/web-spaces`, `feat/web-reservations`, `feat/web-admin` |
 
-Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`. Primero `feat/scaffold` (los tres en una sesión).
+Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`. **Sesión 0:** `feat/scaffold` (esta rama).
+
+Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carlos** = auth / usuarios / Docker; **Mateo** = frontend.
 
 ### Fase 1 — Análisis y requisitos (semanas 1–4)
 
@@ -278,7 +280,20 @@ SportSpace/
 └── README.md
 ```
 
-Esta estructura se creará al iniciar la fase 2 de implementación. Hasta entonces el repositorio documenta objetivo, arquitectura y plan.
+El esqueleto vive en `feat/scaffold` (sesión 0). Cómo levantarlo:
+
+```bash
+copy .env.example .env
+copy .env.example apps\api\.env
+docker compose up -d
+npm install
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev:api
+npm run dev:web
+```
+
+API: `http://localhost:3000/api/health` · Web: `http://localhost:5173`.
 
 ---
 

@@ -1,0 +1,56 @@
+:root {
+  font-family: Segoe UI, system-ui, sans-serif;
+  color: #14221b;
+  background: #f4f7f5;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: #0f6b3c;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.4rem;
+  background: #0f6b3c;
+  color: #fff;
+}
+
+.app-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.app-header a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-header a.active {
+  text-decoration: underline;
+}
+
+.app-main,
+.auth-page {
+  padding: 1.5rem;
+}
+
+.muted {
+  color: #4d5c54;
+}
