@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.4 |
+| Versión | 1.5 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -589,3 +589,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.2 | 2026-09-12 | HU-19 y HU-20 pasan a Must (MVP). Se agrega RF-22 y escenarios Gherkin. |
 | 1.3 | 2026-09-12 | Convención de idioma: docs en español; código y base de datos en inglés. |
 | 1.4 | 2026-10-05 | Reparto Dilan / Carlos / Mateo y flujo de ramas (`docs/plan-equipo.md`). |
+| 1.5 | 2026-10-12 | Swap de backend: Dilan toma espacios/reservas; Carlos toma auth/Docker. |

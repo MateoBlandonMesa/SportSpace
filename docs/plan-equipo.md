@@ -2,7 +2,7 @@
 
 Tres personas, **una rama por tarea**, PRs hacia `main`. No se programa en `main`. Código, API y BD en inglés; docs y copy de UI en español.
 
-Hoy: fase 2 (aún no hay `apps/`). Primero un esqueleto común; después trabajo en paralelo.
+Hoy: **sesión 0** en `feat/scaffold`. El esqueleto ya está en esta rama; al cerrar la sesión se hace PR a `main`. Después cada uno abre su `feat/…`.
 
 ---
 
