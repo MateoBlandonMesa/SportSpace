@@ -9,6 +9,8 @@ node_modules/
 dist/
 build/
 coverage/
+.vite/
+apps/web/.vite/
 
 # IDE y SO
 .idea/
