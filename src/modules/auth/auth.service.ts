@@ -80,7 +80,41 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+/*
+///////////////////////////////////////////////////////////////////////
+async refreshToken(refreshToken: string){
+  try {
+      // 1. Verificar la firma y vigencia del refresh token usando su secreto específico
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
 
+      // 2. Buscar al usuario en la base de datos
+      const user = await this.db.user.findUnique({
+        where: { id: payload.sub },
+      });
+
+      // 3. Validar que el usuario exista y que su refreshToken en BD coincida con el enviado
+      if (!user || user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Refresh token inválido o revocado');
+      }
+
+      // 4. Generar un NUEVO Access Token
+      const newAccessToken = await this.jwtService.signAsync(
+        { sub: user.id, email: user.email, role: user.role },
+        {
+          secret: process.env.JWT_ACCESS_SECRET,
+          expiresIn: process.env.JWT_ACCESS_EXPIRATION || '1m',
+        },
+      );
+
+      return { accessToken: newAccessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token expirado o inválido');
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////
+  */
   async logout(userId: string) {
     await this.db.user.update({
       where: { id: userId },
