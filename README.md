@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT y muestra el catálogo/detalle de espacios (`feat/web-spaces`).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT y muestra el catálogo/detalle. Disponibilidad del día: `GET /api/spaces/:id/availability?date=YYYY-MM-DD` (`feat/availability`).
 
 ---
 

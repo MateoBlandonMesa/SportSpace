@@ -242,7 +242,49 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability"
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability?date=2026-10-13",
+            "description": "Franjas de 60 min en America/Bogota. status: FREE | BUSY | BLOCKED | PAST. Requiere date=YYYY-MM-DD."
+          }
+        },
+        {
+          "name": "GET availability past date",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability?date=2026-10-01",
+            "description": "Fecha pasada: franjas con status PAST y bookable=false."
+          }
+        },
+        {
+          "name": "PUT weekly hours",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"daysOfWeek\": [1, 2, 3, 4, 5],\n  \"startTime\": \"06:00\",\n  \"endTime\": \"22:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/weekly-hours",
+            "description": "STAFF/ADMIN. daysOfWeek 1=lunes … 7=domingo. Reemplaza el horario semanal del espacio."
+          }
+        },
+        {
+          "name": "POST block",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startsAt\": \"2026-10-13T09:00:00-05:00\",\n  \"endsAt\": \"2026-10-13T12:00:00-05:00\",\n  \"reason\": \"mantenimiento\"\n}"
+            },
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/blocks",
+            "description": "STAFF/ADMIN. Bloquea un intervalo; esas franjas salen BLOCKED."
           }
         }
       ]

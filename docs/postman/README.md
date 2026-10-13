@@ -10,6 +10,8 @@ Archivo: [SportSpace.postman_collection.json](SportSpace.postman_collection.json
 
 Tras **POST space**, el `id` queda en `spaceId`. Las rutas protegidas envían `Authorization: Bearer {{accessToken}}`.
 
+Disponibilidad: **GET** `/api/spaces/{{spaceId}}/availability?date=YYYY-MM-DD`. Staff/admin: **PUT weekly-hours** y **POST blocks**.
+
 En login, Postman debe enviar y guardar cookies (cookie jar) para **POST refresh**.
 
 ## Mantenimiento

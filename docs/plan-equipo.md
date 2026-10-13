@@ -74,7 +74,7 @@ Hacer **en una sola sesión**, rama `feat/scaffold`, merge a `main` el mismo dí
 | Orden | Rama | Qué entrega | Depende de |
 | --- | --- | --- | --- |
 | 1 | `feat/spaces` | CRUD espacios, solo `STAFF`/`ADMIN`; listado activos | Scaffold; guards de Carlos en `main` (o stub) |
-| 2 | `feat/availability` | Reglas de horario, bloqueos, GET disponibilidad del día | `feat/spaces` en `main` |
+| 2 | `feat/availability` | Reglas de horario, bloqueos, GET disponibilidad del día (`?date=YYYY-MM-DD`) | `feat/spaces` en `main` |
 | 3 | `feat/reservations` | Crear `PENDING`, mis reservas, cancelar, aprobar/rechazar, transiciones, exclusión SQL | Auth + spaces + availability en `main` |
 | 4 | `feat/occupancy` | Dashboard semanal (API) | Reservas en `main` |
 
@@ -145,7 +145,7 @@ Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `
 | --- | --- | --- | --- |
 | Sesión 0 | Scaffold + Prisma | Scaffold + Docker | Scaffold + web shell |
 | Siguiente | Modelo + `feat/spaces` (con stub de guard) | `feat/auth` | `feat/web-shell` |
-| Luego | `feat/availability` | Guards + seed admin | `feat/web-auth` (login/registro + Bearer) |
+| Luego | `feat/availability` (franjas, horario, bloqueos) | Guards + seed admin | `feat/web-auth` (login/registro + Bearer) |
 | Luego | `feat/reservations` + exclusión | `feat/roles` (HU-20) | `feat/web-spaces` (catálogo y detalle) |
 | Luego | `feat/occupancy` (HU-19) | CI, rate limit | `feat/web-reservations` + admin |
 | Fase 5 | Tests solape / carrera | Tests API auth | E2E Gherkin |
