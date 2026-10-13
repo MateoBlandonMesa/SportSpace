@@ -9,7 +9,9 @@
     { "key": "baseUrl", "value": "http://localhost:3000" },
     { "key": "accessToken", "value": "" },
     { "key": "spaceId", "value": "00000000-0000-4000-8000-000000000000" },
-    { "key": "reservationId", "value": "00000000-0000-4000-8000-000000000000" }
+    { "key": "reservationId", "value": "00000000-0000-4000-8000-000000000000" },
+    { "key": "userId", "value": "00000000-0000-4000-8000-000000000000" },
+    { "key": "adminUserId", "value": "00000000-0000-4000-8000-000000000000" }
   ],
   "item": [
     {
@@ -130,11 +132,60 @@
       "item": [
         {
           "name": "GET users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const users = pm.response.json();",
+                  "  const other = users.find((item) => item.role !== 'ADMIN');",
+                  "  const admin = users.find((item) => item.role === 'ADMIN');",
+                  "  if (other) pm.collectionVariables.set('userId', other.id);",
+                  "  if (admin) pm.collectionVariables.set('adminUserId', admin.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
             "url": "{{baseUrl}}/api/users",
-            "description": "Solo ADMIN. Hoy responde []."
+            "description": "Solo ADMIN. Lista id, name, email y role."
+          }
+        },
+        {
+          "name": "PATCH user role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"STAFF\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/{{userId}}",
+            "description": "Solo ADMIN. STUDENT | STAFF | ADMIN. El JWT se revalida contra la BD en la siguiente petición."
+          }
+        },
+        {
+          "name": "PATCH last admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"STAFF\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/{{adminUserId}}",
+            "description": "Degradar al último ADMIN debe responder 409."
           }
         }
       ]
