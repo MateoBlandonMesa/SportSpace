@@ -84,7 +84,7 @@ model Reservation {
   @@index([spaceId, startsAt])
   @@index([userId])
   @@index([status])
-  // Overlap exclusion (PENDING/APPROVED) is added by Dilan on feat/reservations.
+  // DB also keeps tstzrange "span" (trigger) plus EXCLUDE Reservation_no_overlap.
 }
 
 model AuditLog {

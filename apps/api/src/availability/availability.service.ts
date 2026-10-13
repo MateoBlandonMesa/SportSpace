@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { AvailabilityKind, ReservationStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from '../spaces/spaces.service';
@@ -138,6 +138,50 @@ export class AvailabilityService {
       },
     });
   }
+
+  async assertBookableInterval(spaceId: string, startsAt: Date, endsAt: Date): Promise<void> {
+    const startDate = bogotaDateOf(startsAt);
+    const endDate = bogotaDateOf(new Date(endsAt.getTime() - 1));
+    if (startDate !== endDate) {
+      throw new BadRequestException('Reservations must stay on a single calendar day');
+    }
+
+    const day = await this.getDay(spaceId, startDate);
+    const covering = day.slots.filter((slot) => {
+      const slotStart = new Date(slot.startsAt);
+      const slotEnd = new Date(slot.endsAt);
+      return slotStart < endsAt && slotEnd > startsAt;
+    });
+
+    if (covering.length === 0) {
+      throw new BadRequestException('Interval is outside operating hours');
+    }
+
+    const firstStart = new Date(covering[0].startsAt).getTime();
+    const lastEnd = new Date(covering[covering.length - 1].endsAt).getTime();
+    if (firstStart !== startsAt.getTime() || lastEnd !== endsAt.getTime()) {
+      throw new BadRequestException('Interval must align to 60-minute operating slots');
+    }
+
+    const blocked = covering.find((slot) => slot.status === 'BLOCKED');
+    if (blocked) {
+      throw new ConflictException(blocked.reason ?? 'This time is blocked');
+    }
+
+    const past = covering.find((slot) => slot.status === 'PAST');
+    if (past) {
+      throw new BadRequestException('Cannot reserve a past time slot');
+    }
+
+    const busy = covering.find((slot) => slot.status === 'BUSY');
+    if (busy) {
+      throw new ConflictException('This time overlaps an existing reservation');
+    }
+  }
+}
+
+function bogotaDateOf(instant: Date): string {
+  return instant.toLocaleDateString('en-CA', { timeZone: TIME_ZONE });
 }
 
 function isValidIsoDate(date: string): boolean {

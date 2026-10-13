@@ -146,7 +146,7 @@ Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `
 | Sesión 0 | Scaffold + Prisma | Scaffold + Docker | Scaffold + web shell |
 | Siguiente | Modelo + `feat/spaces` (con stub de guard) | `feat/auth` | `feat/web-shell` |
 | Luego | `feat/availability` (franjas, horario, bloqueos) | Guards + seed admin | `feat/web-auth` (login/registro + Bearer) |
-| Luego | `feat/reservations` + exclusión | `feat/roles` (HU-20) | `feat/web-spaces` (catálogo y detalle) |
+| Luego | `feat/reservations` (PENDING, cancelar, solape) | `feat/roles` (HU-20) | `feat/web-spaces` (catálogo y detalle) |
 | Luego | `feat/occupancy` (HU-19) | CI, rate limit | `feat/web-reservations` + admin |
 | Fase 5 | Tests solape / carrera | Tests API auth | E2E Gherkin |
 
