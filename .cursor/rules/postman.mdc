@@ -1,0 +1,20 @@
+---
+description: Mantener la colección Postman al día con cada cambio de endpoint HTTP.
+alwaysApply: true
+---
+
+# Colección Postman viva
+
+Si se **agrega, cambia o elimina** un endpoint HTTP (ruta, método, query, body, auth o código de respuesta), actualizar en el **mismo cambio** `docs/postman/SportSpace.postman_collection.json`.
+
+Incluir en la request:
+
+- Nombre, método y URL bajo `{{baseUrl}}/api/…`
+- `Authorization: Bearer {{accessToken}}` si el endpoint exige JWT
+- Body JSON con los campos en inglés del DTO
+- Descripción corta en español (quién puede llamarlo, query obligatoria, 409, etc.)
+- Script `test` que guarde `accessToken`, `spaceId` o `reservationId` cuando el 2xx los devuelva
+
+Ejemplos: `POST /api/reservations`, `GET /api/occupancy?weekStart=YYYY-MM-DD` — no dejar la colección con la ruta vieja ni sin la request nueva.
+
+No hace falta tocar Postman si el cambio es solo UI.
