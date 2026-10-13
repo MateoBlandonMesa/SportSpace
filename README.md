@@ -1,6 +1,6 @@
 # SportSpace
 
-Plataforma web para **consultar en tiempo real la disponibilidad** y **gestionar reservas** de los espacios deportivos de la Universidad de Antioquia.
+Plataforma WEB para **consultar en tiempo real la disponibilidad** y **gestionar reservas** de los espacios deportivos de la Universidad de Antioquia.
 
 Hoy la solicitud depende del escenario (Portafolio, correo, confirmación administrativa). SportSpace centraliza ese proceso: el usuario ve el espacio, el horario y el estado de su solicitud en un solo lugar; la administración revisa y confirma sin perder consistencia entre reservas.
 
