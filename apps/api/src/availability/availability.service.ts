@@ -4,10 +4,18 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from '../spaces/spaces.service';
 import { CreateBlockDto } from './dto/create-block.dto';
 import { SetWeeklyHoursDto } from './dto/set-weekly-hours.dto';
-
-export const TIME_ZONE = 'America/Bogota';
-export const SLOT_MINUTES = 60;
-const BOGOTA_OFFSET = '-05:00';
+import {
+  SLOT_MINUTES,
+  TIME_ZONE,
+  addDays,
+  bogotaDateOf,
+  bogotaDateTime,
+  buildSlots,
+  isValidIsoDate,
+  isoDayOfWeek,
+  overlaps,
+  uniqueByStart,
+} from './slot-math';
 
 export type SlotStatus = 'FREE' | 'BUSY' | 'BLOCKED' | 'PAST';
 
@@ -178,66 +186,6 @@ export class AvailabilityService {
       throw new ConflictException('This time overlaps an existing reservation');
     }
   }
-}
-
-function bogotaDateOf(instant: Date): string {
-  return instant.toLocaleDateString('en-CA', { timeZone: TIME_ZONE });
-}
-
-function isValidIsoDate(date: string): boolean {
-  const [year, month, day] = date.split('-').map(Number);
-  const utc = new Date(Date.UTC(year, month - 1, day));
-  return utc.getUTCFullYear() === year && utc.getUTCMonth() === month - 1 && utc.getUTCDate() === day;
-}
-
-function bogotaDateTime(date: string, time: string): Date {
-  return new Date(`${date}T${time}:00${BOGOTA_OFFSET}`);
-}
-
-function addDays(date: string, amount: number): string {
-  const [year, month, day] = date.split('-').map(Number);
-  const utc = new Date(Date.UTC(year, month - 1, day + amount));
-  return utc.toISOString().slice(0, 10);
-}
-
-function isoDayOfWeek(date: string): number {
-  const noon = bogotaDateTime(date, '12:00');
-  const jsDay = noon.getUTCDay();
-  return jsDay === 0 ? 7 : jsDay;
-}
-
-function buildSlots(date: string, startTime: string, endTime: string): Array<{ startsAt: Date; endsAt: Date }> {
-  const slots: Array<{ startsAt: Date; endsAt: Date }> = [];
-  let cursor = bogotaDateTime(date, startTime);
-  const end = bogotaDateTime(date, endTime);
-  const step = SLOT_MINUTES * 60 * 1000;
-
-  while (cursor.getTime() + step <= end.getTime()) {
-    const next = new Date(cursor.getTime() + step);
-    slots.push({ startsAt: cursor, endsAt: next });
-    cursor = next;
-  }
-
-  return slots;
-}
-
-function uniqueByStart(slots: Array<{ startsAt: Date; endsAt: Date }>) {
-  const seen = new Map<number, { startsAt: Date; endsAt: Date }>();
-  for (const slot of slots) {
-    seen.set(slot.startsAt.getTime(), slot);
-  }
-  return [...seen.values()].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
-}
-
-function overlaps(
-  slot: { startsAt: Date; endsAt: Date },
-  startsAt: Date | null,
-  endsAt: Date | null,
-): boolean {
-  if (!startsAt || !endsAt) {
-    return false;
-  }
-  return startsAt < slot.endsAt && endsAt > slot.startsAt;
 }
 
 function toSlot(

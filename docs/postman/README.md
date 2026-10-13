@@ -14,6 +14,8 @@ Disponibilidad: **GET** `/api/spaces/{{spaceId}}/availability?date=YYYY-MM-DD`. 
 
 Reservas: **POST /api/reservations** (PENDING, guarda `reservationId`) → GET mías → cancel / approve / reject. Un solape responde 409.
 
+Ocupación: **GET /api/occupancy?weekStart=YYYY-MM-DD** (STAFF/ADMIN). Opcional `spaceId`.
+
 En login, Postman debe enviar y guardar cookies (cookie jar) para **POST refresh**.
 
 ## Mantenimiento

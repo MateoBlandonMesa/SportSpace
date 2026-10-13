@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.11 |
+| Versión | 1.12 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -596,3 +596,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.9 | 2026-10-12 | Front `feat/web-spaces`: catálogo de espacios activos, filtros campus/tipo y detalle (HU-05, HU-06, HU-08). |
 | 1.10 | 2026-10-12 | API `feat/availability`: franjas de 60 min (FREE/BUSY/BLOCKED/PAST), horario semanal y bloqueos. Zona America/Bogota. |
 | 1.11 | 2026-10-12 | API `feat/reservations`: crear PENDING, mis reservas, cancelar, aprobar/rechazar, auditoría y EXCLUDE de solape en PostgreSQL. |
+| 1.12 | 2026-10-12 | API `feat/occupancy`: dashboard semanal STAFF/ADMIN (horas habilitadas, ocupadas, bloqueadas y %). |
