@@ -382,6 +382,28 @@
           }
         }
       ]
+    },
+    {
+      "name": "Occupancy",
+      "item": [
+        {
+          "name": "GET occupancy week",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/occupancy?weekStart=2026-10-12",
+            "description": "STAFF/ADMIN. Semana lunes–domingo America/Bogota. weekStart se normaliza al lunes."
+          }
+        },
+        {
+          "name": "GET occupancy by space",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/occupancy?weekStart=2026-10-12&spaceId={{spaceId}}"
+          }
+        }
+      ]
     }
   ]
 }
