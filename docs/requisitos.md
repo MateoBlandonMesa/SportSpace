@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.7 |
+| Versión | 1.8 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -592,3 +592,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.5 | 2026-10-12 | Swap de backend: Dilan toma espacios/reservas; Carlos toma auth/Docker. |
 | 1.6 | 2026-10-12 | Colección Postman en `docs/postman/`; se actualiza con cada cambio de API. |
 | 1.7 | 2026-10-12 | Auth integrado en `apps/api` (register/login/refresh/logout/profile). No mergear `feat/auth` de la raíz. |
+| 1.8 | 2026-10-12 | Front `feat/web-auth`: login/registro, sesión JWT, Bearer y rutas protegidas. El visitante no ve el catálogo. |
