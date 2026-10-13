@@ -37,3 +37,41 @@ export type Space = {
   usageRules: string;
   isActive: boolean;
 };
+
+export type SlotStatus = 'FREE' | 'BUSY' | 'BLOCKED' | 'PAST';
+
+export type AvailabilitySlot = {
+  startsAt: string;
+  endsAt: string;
+  status: SlotStatus;
+  bookable: boolean;
+  reason?: string;
+};
+
+export type AvailabilityDay = {
+  spaceId: string;
+  spaceName: string;
+  date: string;
+  timeZone: string;
+  slotMinutes: number;
+  slots: AvailabilitySlot[];
+};
+
+export type ReservationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+
+export type Reservation = {
+  id: string;
+  spaceId: string;
+  userId: string;
+  startsAt: string;
+  endsAt: string;
+  status: ReservationStatus;
+  reason: string | null;
+  createdAt: string;
+  space: {
+    id: string;
+    name: string;
+    type: string;
+    campus: string;
+  };
+};
