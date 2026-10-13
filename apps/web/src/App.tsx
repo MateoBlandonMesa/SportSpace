@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { MyReservationsPage } from './pages/MyReservationsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { SpaceDetailPage } from './pages/SpaceDetailPage';
 import { SpacesPage } from './pages/SpacesPage';
 
 export function App() {
@@ -22,6 +23,7 @@ export function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Navigate to="/spaces" replace />} />
             <Route path="/spaces" element={<SpacesPage />} />
+            <Route path="/spaces/:spaceId" element={<SpaceDetailPage />} />
             <Route path="/spaces/:spaceId/availability" element={<AvailabilityPage />} />
             <Route path="/my-reservations" element={<MyReservationsPage />} />
             <Route path="/admin" element={<AdminPage />} />
