@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ApiError, apiGet } from '../api/http';
 
-type ResourceState<T> =
+export type ResourceState<T> =
   | { status: 'loading' }
   | { status: 'empty' }
   | { status: 'success'; data: T }
-  | { status: 'error'; message: string };
+  | { status: 'error'; message: string; httpStatus?: number };
 
 function isEmptyPayload(data: unknown): boolean {
   return Array.isArray(data) && data.length === 0;
@@ -16,6 +16,17 @@ export function useApiResource<T>(path: string): ResourceState<T> {
 
   useEffect(() => {
     let cancelled = false;
+
+    if (!path) {
+      setState({
+        status: 'error',
+        message: 'No encontramos lo que buscabas.',
+        httpStatus: 404,
+      });
+      return;
+    }
+
+    setState({ status: 'loading' });
 
     apiGet<T>(path)
       .then((data) => {
@@ -32,11 +43,14 @@ export function useApiResource<T>(path: string): ResourceState<T> {
         if (cancelled) {
           return;
         }
-        const message =
-          error instanceof ApiError
-            ? error.message
-            : 'No hay conexión con el servidor. ¿Está corriendo la API?';
-        setState({ status: 'error', message });
+        if (error instanceof ApiError) {
+          setState({ status: 'error', message: error.message, httpStatus: error.status });
+          return;
+        }
+        setState({
+          status: 'error',
+          message: 'No hay conexión con el servidor. ¿Está corriendo la API?',
+        });
       });
 
     return () => {

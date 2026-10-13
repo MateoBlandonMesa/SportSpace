@@ -154,3 +154,100 @@ a {
 .space-list {
   padding-left: 1.2rem;
 }
+
+.space-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.9rem;
+  margin: 1rem 0 1.4rem;
+}
+
+.space-filters label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.space-filters select {
+  min-width: 12rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.link-button {
+  border: 0;
+  background: none;
+  color: #0f6b3c;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.space-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.space-card {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 8rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(20 34 27 / 8%);
+  text-decoration: none;
+  color: inherit;
+}
+
+.space-card p {
+  margin: 0.2rem 0 0;
+  color: #4d5c54;
+}
+
+.space-detail {
+  max-width: 42rem;
+}
+
+.space-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.9rem;
+  margin: 1.2rem 0;
+}
+
+.space-facts div {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  box-shadow: 0 8px 24px rgb(20 34 27 / 8%);
+}
+
+.space-facts dt {
+  font-size: 0.85rem;
+  color: #4d5c54;
+}
+
+.space-facts dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+}
+
+.primary-link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: #0f6b3c;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
