@@ -31,4 +31,6 @@ La lógica de Carlos se portó a **`feat/auth-integrate`** → `apps/api/src/aut
 - `POST /api/auth/logout`
 - `GET /api/auth/profile`
 
+El front (`apps/web`) consume estos endpoints: login/registro, cookie de refresh, Bearer en el resto. Carlos no implementa pantallas React.
+
 Siguientes cambios de auth: ramas desde `main` hacia `apps/api/src/auth`, no otro proyecto en la raíz.

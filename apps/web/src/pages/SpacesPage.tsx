@@ -17,7 +17,7 @@ export function SpacesPage() {
     return (
       <EmptyState
         title="Espacios deportivos"
-        description="Aún no hay espacios activos. Dilan los cargará en feat/spaces."
+        description="Aún no hay espacios activos."
       />
     );
   }

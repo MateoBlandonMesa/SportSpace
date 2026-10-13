@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth de Carlos se integra en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)); no mergear `feat/auth` de la raíz.
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front (`feat/web-auth`) inicia sesión, guarda el JWT y envía `Authorization: Bearer` en las peticiones.
 
 ---
 
@@ -296,6 +296,7 @@ npm run dev:web
 ```
 
 API: `http://localhost:3000/api/health` · Web: `http://localhost:5173`.  
+El visitante entra por `/login` o `/register`. Tras `npm run prisma:seed`, admin de desarrollo: `admin@udea.edu.co` / `Admin1234`.  
 Postman: importar `docs/postman/SportSpace.postman_collection.json`.
 
 ---
