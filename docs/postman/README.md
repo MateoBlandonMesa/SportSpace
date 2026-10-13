@@ -6,11 +6,11 @@ Archivo: [SportSpace.postman_collection.json](SportSpace.postman_collection.json
 
 1. API en marcha: `npm run dev:api` (`http://localhost:3000`).
 2. Postman → **Import** → el JSON de esta carpeta.
-3. Orden sugerido en **Spaces**: GET catalog → POST space → GET by id → PATCH edit → GET catalog → PATCH deactivate → GET catalog.
+3. Orden: **Auth → POST register → POST login** (guarda `accessToken`) → Spaces.
 
-Tras **POST space**, el `id` queda en la variable de colección `spaceId`.
+Tras **POST space**, el `id` queda en `spaceId`. Las rutas protegidas envían `Authorization: Bearer {{accessToken}}`.
 
-Aún no hay JWT: los guards de Carlos son stubs y dejan pasar las peticiones.
+En login, Postman debe enviar y guardar cookies (cookie jar) para **POST refresh**.
 
 ## Mantenimiento
 

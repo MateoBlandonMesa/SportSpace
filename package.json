@@ -12,6 +12,7 @@
     "build:web": "npm run build -w @sportspace/web",
     "prisma:generate": "npm run prisma:generate -w @sportspace/api",
     "prisma:migrate": "npm run prisma:migrate -w @sportspace/api",
+    "prisma:seed": "npm run prisma:seed -w @sportspace/api",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down"
   },
