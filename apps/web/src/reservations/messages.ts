@@ -40,8 +40,14 @@ export function toReservationErrorMessage(error: unknown): string {
     if (raw.includes('single calendar day')) {
       return 'La reserva debe quedar en un solo día.';
     }
-    if (raw.includes('cannot transition') || raw.includes('cannot cancel')) {
+    if (raw.includes('cannot cancel')) {
       return 'Esta reserva ya no se puede cancelar.';
+    }
+    if (raw.includes('cannot transition')) {
+      return 'Esta reserva ya no admite ese cambio de estado.';
+    }
+    if (raw.includes('rejection reason')) {
+      return 'Indica un motivo de al menos 3 caracteres.';
     }
     if (error.status === 400) {
       return 'Revisa el horario seleccionado e inténtalo de nuevo.';

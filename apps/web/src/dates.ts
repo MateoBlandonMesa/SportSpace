@@ -53,3 +53,20 @@ export function formatDateTimeBogota(iso: string): string {
 export function formatIntervalBogota(startsAt: string, endsAt: string): string {
   return `${formatDateTimeBogota(startsAt)} – ${formatTimeBogota(endsAt)}`;
 }
+
+export function isoDayOfWeek(isoDate: string): number {
+  const [year, month, day] = isoDate.split('-').map(Number);
+  const utc = new Date(Date.UTC(year, month - 1, day, 12));
+  const jsDay = utc.getUTCDay();
+  return jsDay === 0 ? 7 : jsDay;
+}
+
+export function mondayOfWeek(isoDate: string): string {
+  return shiftIsoDate(isoDate, 1 - isoDayOfWeek(isoDate));
+}
+
+export function formatWeekRange(weekStart: string, weekEnd: string): string {
+  const start = formatDayLabel(weekStart);
+  const end = formatDayLabel(weekEnd);
+  return `${start} – ${end}`;
+}

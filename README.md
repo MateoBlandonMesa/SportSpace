@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo/detalle, el calendario de franjas y permite solicitar o cancelar reservas. Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja y ve ocupación semanal. Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
 
 ---
 

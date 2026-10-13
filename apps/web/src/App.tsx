@@ -1,8 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthProvider';
-import { GuestOnly, RequireAuth } from './auth/route-guards';
+import { GuestOnly, RequireAuth, RequireStaff } from './auth/route-guards';
 import { AppLayout } from './layout/AppLayout';
+import { AdminInboxPage } from './pages/AdminInboxPage';
+import { AdminOccupancyPage } from './pages/AdminOccupancyPage';
 import { AdminPage } from './pages/AdminPage';
+import { AdminRolesPage } from './pages/AdminRolesPage';
 import { AvailabilityPage } from './pages/AvailabilityPage';
 import { LoginPage } from './pages/LoginPage';
 import { MyReservationsPage } from './pages/MyReservationsPage';
@@ -26,7 +29,14 @@ export function App() {
             <Route path="/spaces/:spaceId" element={<SpaceDetailPage />} />
             <Route path="/spaces/:spaceId/availability" element={<AvailabilityPage />} />
             <Route path="/my-reservations" element={<MyReservationsPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route element={<RequireStaff />}>
+              <Route path="/admin" element={<AdminPage />}>
+                <Route index element={<Navigate to="inbox" replace />} />
+                <Route path="inbox" element={<AdminInboxPage />} />
+                <Route path="occupancy" element={<AdminOccupancyPage />} />
+                <Route path="roles" element={<AdminRolesPage />} />
+              </Route>
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
