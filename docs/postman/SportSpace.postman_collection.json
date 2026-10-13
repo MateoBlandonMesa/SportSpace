@@ -8,7 +8,8 @@
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
     { "key": "accessToken", "value": "" },
-    { "key": "spaceId", "value": "00000000-0000-4000-8000-000000000000" }
+    { "key": "spaceId", "value": "00000000-0000-4000-8000-000000000000" },
+    { "key": "reservationId", "value": "00000000-0000-4000-8000-000000000000" }
   ],
   "item": [
     {
@@ -297,19 +298,87 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
-            "url": "{{baseUrl}}/api/reservations"
+            "url": "{{baseUrl}}/api/reservations",
+            "description": "STUDENT ve solo las suyas. STAFF/ADMIN ven todas (hasta 100)."
           }
         },
         {
           "name": "POST reservation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.id) pm.collectionVariables.set('reservationId', body.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
-            "body": { "mode": "raw", "raw": "{}" },
-            "url": "{{baseUrl}}/api/reservations"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spaceId\": \"{{spaceId}}\",\n  \"startsAt\": \"2026-10-14T08:00:00-05:00\",\n  \"endsAt\": \"2026-10-14T10:00:00-05:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reservations",
+            "description": "Crea PENDING. Intervalo alineado a franjas de 60 min. Solape → 409."
+          }
+        },
+        {
+          "name": "POST reservation overlap",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spaceId\": \"{{spaceId}}\",\n  \"startsAt\": \"2026-10-14T08:00:00-05:00\",\n  \"endsAt\": \"2026-10-14T10:00:00-05:00\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reservations",
+            "description": "Misma franja que POST reservation; debe responder 409."
+          }
+        },
+        {
+          "name": "POST cancel reservation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/reservations/{{reservationId}}/cancel"
+          }
+        },
+        {
+          "name": "POST approve reservation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/reservations/{{reservationId}}/approve",
+            "description": "STAFF/ADMIN. PENDING → APPROVED."
+          }
+        },
+        {
+          "name": "POST reject reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Evento institucional\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reservations/{{reservationId}}/reject",
+            "description": "STAFF/ADMIN. PENDING → REJECTED. Motivo obligatorio."
           }
         }
       ]

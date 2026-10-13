@@ -12,6 +12,8 @@ Tras **POST space**, el `id` queda en `spaceId`. Las rutas protegidas envían `A
 
 Disponibilidad: **GET** `/api/spaces/{{spaceId}}/availability?date=YYYY-MM-DD`. Staff/admin: **PUT weekly-hours** y **POST blocks**.
 
+Reservas: **POST /api/reservations** (PENDING, guarda `reservationId`) → GET mías → cancel / approve / reject. Un solape responde 409.
+
 En login, Postman debe enviar y guardar cookies (cookie jar) para **POST refresh**.
 
 ## Mantenimiento
