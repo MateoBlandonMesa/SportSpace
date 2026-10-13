@@ -11,7 +11,7 @@ function isEmptyPayload(data: unknown): boolean {
   return Array.isArray(data) && data.length === 0;
 }
 
-export function useApiResource<T>(path: string): ResourceState<T> {
+export function useApiResource<T>(path: string, refreshKey = 0): ResourceState<T> {
   const [state, setState] = useState<ResourceState<T>>({ status: 'loading' });
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function useApiResource<T>(path: string): ResourceState<T> {
     return () => {
       cancelled = true;
     };
-  }, [path]);
+  }, [path, refreshKey]);
 
   return state;
 }
