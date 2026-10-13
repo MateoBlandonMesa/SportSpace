@@ -74,4 +74,36 @@ export type Reservation = {
     type: string;
     campus: string;
   };
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
+
+export type OccupancySpace = {
+  spaceId: string;
+  name: string;
+  type: string;
+  campus: string;
+  isActive: boolean;
+  enabledHours: number;
+  occupiedHours: number;
+  blockedHours: number;
+  occupancyPercent: number;
+};
+
+export type OccupancyWeek = {
+  weekStart: string;
+  weekEnd: string;
+  timeZone: string;
+  slotMinutes: number;
+  spaces: OccupancySpace[];
+};
+
+export type ManagedUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
 };

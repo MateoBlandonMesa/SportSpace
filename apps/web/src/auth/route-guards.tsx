@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { LoadingState } from '../components/FeedbackState';
+import { ErrorState, LoadingState } from '../components/FeedbackState';
 import { useAuth } from './AuthProvider';
 
 export function RequireAuth() {
@@ -26,6 +26,22 @@ export function GuestOnly() {
 
   if (status === 'authenticated') {
     return <Navigate to="/spaces" replace />;
+  }
+
+  return <Outlet />;
+}
+
+export function RequireStaff() {
+  const { user } = useAuth();
+  const isStaff = user?.role === 'STAFF' || user?.role === 'ADMIN';
+
+  if (!isStaff) {
+    return (
+      <ErrorState
+        title="Administración"
+        description="No tienes permiso para ver esta sección."
+      />
+    );
   }
 
   return <Outlet />;

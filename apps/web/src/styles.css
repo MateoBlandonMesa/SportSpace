@@ -468,3 +468,115 @@ a {
   background: #eef0ef;
   color: #4d5c54;
 }
+
+.admin-page {
+  max-width: 56rem;
+}
+
+.admin-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin: 1rem 0 1.3rem;
+}
+
+.admin-nav a {
+  padding: 0.35rem 0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-nav a.active {
+  text-decoration: underline;
+}
+
+.admin-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.6rem 0 1rem;
+  font-weight: 600;
+}
+
+.reject-form {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 14rem;
+}
+
+.reject-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.reject-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.availability-nav select {
+  min-width: 12rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.occupancy-table-wrap {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.occupancy-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(20 34 27 / 8%);
+}
+
+.occupancy-table th,
+.occupancy-table td {
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.occupancy-table th {
+  font-size: 0.85rem;
+  color: #4d5c54;
+  font-weight: 600;
+}
+
+.occupancy-table tbody tr + tr td {
+  border-top: 1px solid #e6eee9;
+}
+
+.occupancy-table td p {
+  margin: 0.2rem 0 0;
+}
+
+.occupancy-meter {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 7rem;
+}
+
+.occupancy-bar {
+  height: 0.45rem;
+  background: #e6eee9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.occupancy-bar span {
+  display: block;
+  height: 100%;
+  background: #0f6b3c;
+}
