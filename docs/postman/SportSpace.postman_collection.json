@@ -2,18 +2,13 @@
   "info": {
     "_postman_id": "sportspace-api-local",
     "name": "SportSpace API",
-    "description": "Peticiones locales de SportSpace. Importar en Postman (File → Import). Variable `baseUrl`: http://localhost:3000. Tras crear un espacio, `spaceId` se guarda solo. Actualizar esta colección en el mismo PR cuando cambie un endpoint.",
+    "description": "Importar en Postman. baseUrl=http://localhost:3000. Login guarda accessToken. POST space guarda spaceId. Las rutas de spaces/reservas llevan Bearer.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
-    },
-    {
-      "key": "spaceId",
-      "value": "00000000-0000-4000-8000-000000000000"
-    }
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "accessToken", "value": "" },
+    { "key": "spaceId", "value": "00000000-0000-4000-8000-000000000000" }
   ],
   "item": [
     {
@@ -22,61 +17,144 @@
         {
           "name": "GET health",
           "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/health",
-            "description": "Comprueba que la API está viva. Esperado: `{ \"status\": \"ok\" }`."
+            "url": "{{baseUrl}}/api/health"
           }
         }
       ]
     },
     {
-      "name": "Auth (stub — Carlos)",
+      "name": "Auth",
       "item": [
         {
-          "name": "GET auth status",
+          "name": "POST register",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ana Estudiante\",\n  \"email\": \"ana.estudiante@udea.edu.co\",\n  \"password\": \"Clave1234\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "POST login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.accessToken) pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana.estudiante@udea.edu.co\",\n  \"password\": \"Clave1234\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "POST login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.accessToken) pm.collectionVariables.set('accessToken', body.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@udea.edu.co\",\n  \"password\": \"Admin1234\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login",
+            "description": "Tras `npm run prisma:seed`."
+          }
+        },
+        {
+          "name": "POST refresh",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "description": "Usa cookie refreshToken del login. En Postman activa cookie jar."
+          }
+        },
+        {
+          "name": "GET profile",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/auth/status",
-            "description": "Placeholder hasta feat/auth. Esperado: implemented false."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/auth/profile"
+          }
+        },
+        {
+          "name": "POST logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/auth/logout"
           }
         }
       ]
     },
     {
-      "name": "Users (stub — Carlos)",
+      "name": "Users",
       "item": [
         {
           "name": "GET users",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
             "url": "{{baseUrl}}/api/users",
-            "description": "Lista de usuarios (ADMIN). Hoy el guard es stub y responde []. feat/auth y feat/roles la completan."
+            "description": "Solo ADMIN. Hoy responde []."
           }
         }
       ]
     },
     {
-      "name": "Spaces (Dilan)",
+      "name": "Spaces",
       "item": [
         {
           "name": "GET spaces (catalog)",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/spaces",
-            "description": "Solo espacios activos. Catálogo vacío = `[]`."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces"
           }
         },
         {
           "name": "GET spaces filtered",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/spaces?campus=Ciudad Universitaria&type=pista",
-            "description": "Filtros HU-08 (Should): campus y type."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces?campus=Ciudad Universitaria&type=pista"
           }
         },
         {
@@ -89,9 +167,7 @@
                 "exec": [
                   "if (pm.response.code === 201 || pm.response.code === 200) {",
                   "  const body = pm.response.json();",
-                  "  if (body.id) {",
-                  "    pm.collectionVariables.set('spaceId', body.id);",
-                  "  }",
+                  "  if (body.id) pm.collectionVariables.set('spaceId', body.id);",
                   "}"
                 ]
               }
@@ -100,32 +176,30 @@
           "request": {
             "method": "POST",
             "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Pista sintetica\",\n  \"type\": \"pista\",\n  \"campus\": \"Ciudad Universitaria\",\n  \"capacity\": 40,\n  \"usageRules\": \"Uso con reserva previa\"\n}"
             },
-            "url": "{{baseUrl}}/api/spaces",
-            "description": "Crea un espacio activo. Guarda `id` en la variable spaceId."
+            "url": "{{baseUrl}}/api/spaces"
           }
         },
         {
           "name": "GET space by id",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}",
-            "description": "Detalle. Ejecutar POST space antes o pegar un UUID. 404 si no existe."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}"
           }
         },
         {
           "name": "GET space not found",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/spaces/00000000-0000-4000-8000-000000000000",
-            "description": "Esperado: 404 Space not found."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/00000000-0000-4000-8000-000000000000"
           }
         },
         {
@@ -133,14 +207,14 @@
           "request": {
             "method": "PATCH",
             "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"capacity\": 50,\n  \"usageRules\": \"Reserva con 24 horas de anticipacion\"\n}"
             },
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}",
-            "description": "Edita campos. Usa spaceId de POST space."
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}"
           }
         },
         {
@@ -148,42 +222,40 @@
           "request": {
             "method": "PATCH",
             "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"isActive\": false\n}"
             },
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}",
-            "description": "Desactiva. El GET catalog ya no debe listarlo."
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}"
           }
         }
       ]
     },
     {
-      "name": "Availability (stub — Dilan)",
+      "name": "Availability",
       "item": [
         {
           "name": "GET availability by space",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability",
-            "description": "Placeholder feat/availability. Hoy responde []."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability"
           }
         }
       ]
     },
     {
-      "name": "Reservations (stub — Dilan)",
+      "name": "Reservations",
       "item": [
         {
           "name": "GET my reservations",
           "request": {
             "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/api/reservations",
-            "description": "Placeholder. Hoy responde []."
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/reservations"
           }
         },
         {
@@ -191,14 +263,11 @@
           "request": {
             "method": "POST",
             "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
               { "key": "Content-Type", "value": "application/json" }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{}"
-            },
-            "url": "{{baseUrl}}/api/reservations",
-            "description": "Placeholder feat/reservations. Hoy: implemented false."
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{baseUrl}}/api/reservations"
           }
         }
       ]
