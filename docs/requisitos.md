@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.15 |
+| Versión | 1.16 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -600,3 +600,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.13 | 2026-10-12 | Front `feat/web-reservations`: calendario de franjas, solicitar reserva PENDING y listar/cancelar mis reservas (HU-09, HU-11, HU-13, HU-14). |
 | 1.14 | 2026-10-12 | Front `feat/web-admin`: bandeja aprobar/rechazar (HU-15) y dashboard de ocupación semanal (HU-19). Roles (HU-20) espera el API `feat/roles`. |
 | 1.15 | 2026-10-12 | API y front `feat/roles`: listar usuarios, cambiar rol (ADMIN) y bloquear degradar al último ADMIN; el JWT toma el rol actual de la BD (HU-20). |
+| 1.16 | 2026-10-13 | Plan de trabajo restante (P0 HU-07/HU-10 UI, P1 carrera/CI/E2E, P2 pulido) con dueños y ramas; HU-17/HU-18 siguen fuera de PI1. |

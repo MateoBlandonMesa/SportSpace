@@ -2,7 +2,7 @@
 
 Tres personas, **una rama por tarea**, PRs hacia `main`. No se programa en `main`. Código, API y BD en inglés; docs y copy de UI en español.
 
-Hoy: **sesión 0** en `feat/scaffold`. El esqueleto ya está en esta rama; al cerrar la sesión se hace PR a `main`. Después cada uno abre su `feat/…`.
+El scaffold, auth, espacios, reservas, ocupación, roles y el front de consulta/admin ya están en `main`. Lo que falta (prioridad y dueño): [README — plan de trabajo restante](../README.md#plan-de-trabajo-restante-fase-5).
 
 ---
 
@@ -139,16 +139,19 @@ Si dos PRs tocan el mismo archivo, el segundo espera a que el primero esté en `
 
 ---
 
-## 7. Ritmo sugerido (desde ahora)
+## 7. Ritmo (hecho vs. restante)
 
-| Bloque | Dilan | Carlos | Mateo |
-| --- | --- | --- | --- |
-| Sesión 0 | Scaffold + Prisma | Scaffold + Docker | Scaffold + web shell |
-| Siguiente | Modelo + `feat/spaces` (con stub de guard) | `feat/auth` | `feat/web-shell` |
-| Luego | `feat/availability` (franjas, horario, bloqueos) | Guards + seed admin | `feat/web-auth` (login/registro + Bearer) |
-| Luego | `feat/reservations` (PENDING, cancelar, solape) | `feat/roles` (HU-20) | `feat/web-spaces` (catálogo y detalle) |
-| Luego | `feat/occupancy` (dashboard semanal HU-19) | CI, rate limit | `feat/web-reservations` + admin |
-| Fase 5 | Tests solape / carrera | Tests API auth | E2E Gherkin |
+Hecho en `main`: scaffold, auth, CRUD API de espacios, disponibilidad, reservas, ocupación, roles, catálogo/detalle/filtros, calendario, mis reservas, bandeja, dashboard y gestión de roles.
+
+Restante (detalle en el [README](../README.md#plan-de-trabajo-restante-fase-5)):
+
+| Prioridad | Bloque | Dilan | Carlos | Mateo |
+| --- | --- | --- | --- | --- |
+| P0 | Must de producto | `feat/spaces-staff-list` (listar inactivos a staff) | — | `feat/web-spaces-admin` → `feat/web-hours-blocks` |
+| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` | `feat/e2e-gherkin` (después de P0) |
+| P2 | Pulido | Tests de transiciones | Helmet/CORS; tests 403 | Recorrido visual ≥ 1024 px |
+
+HU-08 ya está. HU-17 y HU-18 no se implementan en PI1.
 
 ---
 
