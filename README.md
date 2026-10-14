@@ -158,7 +158,7 @@ Esto desbloquea la semana 7 sin tickets a Informática. El correo UdeA identific
 
 Metodología: **cascada con retroalimentación** al cierre de cada fase. Si una revisión cambia un requisito, se ajusta el diseño o el código **antes** de cerrar la fase siguiente.
 
-División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](docs/plan-equipo.md)):
+División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](docs/plan-equipo.md)). Lo que falta del MVP: [plan de trabajo restante](#plan-de-trabajo-restante-fase-5).
 
 | Persona | Enfoque principal | Apoyo | Ramas típicas |
 | --- | --- | --- | --- |
@@ -166,7 +166,7 @@ División del equipo (detalle de ramas y orden de merge: [docs/plan-equipo.md](d
 | Carlos Casas | Backend: auth, usuarios, seguridad | Docker, CI | `feat/auth`, `feat/roles` |
 | Mateo Blandón | Frontend: consulta, solicitud, panel admin | E2E, merge a `main` | `feat/web-shell`, `feat/web-auth`, `feat/web-spaces`, `feat/web-reservations`, `feat/web-admin` |
 
-Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`. **Sesión 0:** `feat/scaffold` (esta rama).
+Flujo Git: cada quien trabaja en su `feat/…` desde `main`; se une con PR (review de otro integrante). No se commitea en `main`.
 
 Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carlos** = auth / usuarios / Docker; **Mateo** = frontend.
 
@@ -229,6 +229,50 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 - Ajustes de UI (estados vacíos, carga, errores) y rendimiento de la consulta de disponibilidad.
 
 **Criterio de salida:** checklist de requisitos con evidencia (capturas o reportes de test).
+
+### Plan de trabajo restante (fase 5)
+
+El ciclo estudiante + bandeja + ocupación + roles ya está en `main`. HU-08 (filtros) también. HU-17 y HU-18 siguen **fuera de PI1**.
+
+Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest). Si al armar una UI falta un campo del DTO, Dilan lo ajusta en un PR corto.
+
+#### P0 — Cerrar Must de producto (antes de la demo)
+
+Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
+
+| Orden | Rama | Qué | Quién | Depende de |
+| --- | --- | --- | --- | --- |
+| 1 | `feat/spaces-staff-list` | `GET /api/spaces` para STAFF/ADMIN lista también inactivos; el estudiante sigue viendo solo activos. Hoy el listado es solo `isActive: true`, y sin eso no se puede desactivar y verificar HU-07. | **Dilan** | `main` |
+| 2 | `feat/web-spaces-admin` | Pantalla staff: crear, editar y desactivar espacios. 403 ya existe. | **Mateo** | (1) en `main` |
+| 3 | `feat/web-hours-blocks` | Pantalla staff: horario semanal y bloqueos por espacio. El API (`PUT weekly-hours`, `POST blocks`) ya está. | **Mateo** | (2) o en paralelo si no se pisan archivos |
+
+#### P1 — Evidencia (criterio de salida del MVP)
+
+| Orden | Rama | Qué | Quién | Depende de |
+| --- | --- | --- | --- | --- |
+| 4 | `feat/race-test` | Prueba documentada de dos `POST /reservations` a la vez: a lo sumo una `PENDING`; la otra 409. Cubre HU-12 / RNF-05. | **Dilan** | En paralelo a P0 |
+| 5 | `feat/ci` | Lint + `tsc` en cada PR (`.github/workflows`). Docker Compose ya existe; dejar `docker compose up` reproducible si falta algo. | **Carlos** | En paralelo a P0 |
+| 6 | `feat/e2e-gherkin` | Playwright contra `docs/gherkin/`: registro/login, catálogo, solicitar, conflicto, bandeja, ocupación, roles, y al final HU-07/HU-10. | **Mateo** | P0 mergeado |
+
+#### P2 — Pulido (si alcanza el tiempo)
+
+| Ítem | Quién | Nota |
+| --- | --- | --- |
+| Recorrido visual escritorio ≥ 1024 px (RNF-09) | **Mateo** | No bloquea HU |
+| Helmet / CORS / secrets (RNF-10) | **Carlos** | Revisión, no feature nueva |
+| Tests de transiciones y 403 (HU-16, HU-04) | **Dilan** + **Carlos** | Jest API; complementa E2E |
+| HU-17 / HU-18 | Nadie | Could; fuera de PI1 |
+
+#### Orden de merge
+
+```
+main
+ ├─ Dilan:  feat/spaces-staff-list  → feat/race-test
+ ├─ Carlos: feat/ci
+ └─ Mateo:  feat/web-spaces-admin → feat/web-hours-blocks → feat/e2e-gherkin
+```
+
+Para sustentación, el camino crítico es **1 → 2 → 3**. CI y la prueba de carrera pueden ir al mismo tiempo. E2E al final, cuando las dos pantallas staff existan.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 
