@@ -43,6 +43,13 @@ Característica: Catálogo de espacios deportivos
     Entonces el sistema responde 404 con un mensaje claro
 
   @HU-07 @RF-09
+  Escenario: Staff ve espacios inactivos en el listado
+    Dado que "carlos.staff@udea.edu.co" inició sesión con rol "STAFF"
+    Cuando consulta el catálogo de espacios
+    Entonces ve "Pista sintética de atletismo"
+    Y ve "Cancha auxiliar"
+
+  @HU-07 @RF-09
   Escenario: Staff crea y desactiva un espacio
     Dado que "carlos.staff@udea.edu.co" inició sesión con rol "STAFF"
     Cuando crea el espacio "Coliseo" de tipo "coliseo" en campus "Ciudad Universitaria"

@@ -1,6 +1,18 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { JwtPayload } from '../auth/jwt.strategy';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { CreateSpaceDto } from './dto/create-space.dto';
@@ -8,14 +20,16 @@ import { ListSpacesQueryDto } from './dto/list-spaces-query.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 import { SpacesService } from './spaces.service';
 
+type AuthedRequest = { user: JwtPayload };
+
 @Controller('spaces')
 export class SpacesController {
   constructor(private readonly spacesService: SpacesService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  list(@Query() query: ListSpacesQueryDto) {
-    return this.spacesService.listActive(query);
+  list(@Req() request: AuthedRequest, @Query() query: ListSpacesQueryDto) {
+    return this.spacesService.list(query, request.user.role);
   }
 
   @Get(':id')

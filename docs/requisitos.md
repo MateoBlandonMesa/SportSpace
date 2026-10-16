@@ -230,8 +230,9 @@ Estimación en puntos (Fibonacci) orientativa para el equipo, no contractual con
 
 1. Staff/admin crea un espacio con nombre, tipo, campus, capacidad y reglas.
 2. Puede editar esos campos y desactivar el espacio (deja de aparecer en el catálogo estudiantil).
-3. Un espacio desactivado no admite nuevas reservas.
-4. Estudiante que intente crear/editar recibe 403.
+3. `GET /api/spaces` con rol `STAFF` o `ADMIN` incluye espacios inactivos; `STUDENT` sigue viendo solo activos.
+4. Un espacio desactivado no admite nuevas reservas.
+5. Estudiante que intente crear/editar recibe 403.
 
 #### HU-08 — Filtrar espacios
 
@@ -467,9 +468,9 @@ Escenarios Gherkin de las HU Must: [gherkin/](gherkin/).
 | RF-04 | El sistema no debe revelar si un correo está registrado en mensajes de login fallido. | HU-02 | Must |
 | RF-05 | El sistema debe permitir cerrar sesión e invalidar la sesión del cliente. | HU-03 | Must |
 | RF-06 | El sistema debe autorizar cada operación según el rol (`STUDENT`, `STAFF`, `ADMIN`). | HU-04 | Must |
-| RF-07 | El sistema debe listar espacios activos a usuarios autenticados. | HU-05 | Must |
+| RF-07 | El sistema debe listar espacios activos a usuarios autenticados (`STUDENT` no ve inactivos). | HU-05 | Must |
 | RF-08 | El sistema debe mostrar el detalle de un espacio (nombre, tipo, campus, capacidad, reglas). | HU-05, HU-06 | Must |
-| RF-09 | El sistema debe permitir a `STAFF` y `ADMIN` crear, editar y desactivar espacios. | HU-07 | Must |
+| RF-09 | El sistema debe permitir a `STAFF` y `ADMIN` crear, editar y desactivar espacios, y listar también los inactivos en `GET /api/spaces`. | HU-07 | Must |
 | RF-10 | El sistema debe permitir filtrar espacios por campus y tipo. | HU-08 | Should |
 | RF-11 | El sistema debe calcular la disponibilidad de un espacio para una fecha a partir de reglas de horario, bloqueos y reservas `PENDING`/`APPROVED`. | HU-09 | Must |
 | RF-12 | El sistema no debe ofrecer franjas en fechas u horas ya transcurridas. | HU-09 | Must |
@@ -601,3 +602,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.14 | 2026-10-12 | Front `feat/web-admin`: bandeja aprobar/rechazar (HU-15) y dashboard de ocupación semanal (HU-19). Roles (HU-20) espera el API `feat/roles`. |
 | 1.15 | 2026-10-12 | API y front `feat/roles`: listar usuarios, cambiar rol (ADMIN) y bloquear degradar al último ADMIN; el JWT toma el rol actual de la BD (HU-20). |
 | 1.16 | 2026-10-13 | Plan de trabajo restante (P0 HU-07/HU-10 UI, P1 carrera/CI/E2E, P2 pulido) con dueños y ramas; HU-17/HU-18 siguen fuera de PI1. |
+| 1.17 | 2026-10-16 | API `feat/spaces-staff-list`: `GET /api/spaces` incluye inactivos para STAFF/ADMIN; el estudiante sigue viendo solo activos (HU-07). |
