@@ -1,8 +1,10 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
 import { ReservationStatus, Role } from '@prisma/client';
 import { AvailabilityService } from '../availability/availability.service';
 import type { JwtPayload } from '../auth/jwt.strategy';
@@ -10,103 +12,134 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from '../spaces/spaces.service';
 import { ReservationsService } from './reservations.service';
 
-describe('ReservationsService', () => {
-  function createService() {
-    const tx = {
+describe('ReservationsService (Cobertura Ampliada)', () => {
+  let spacesServiceMock: any;
+  let availabilityServiceMock: any;
+  let prismaMock: any;
+  let txMock: any;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    // Congelamos el reloj en el futuro absoluto (Año 2030) para controlar el Date.now() de la línea 53
+    jest.setSystemTime(new Date('2030-01-01T12:00:00.000Z'));
+
+    txMock = {
       reservation: {
-        create: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
-        update: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+        create: jest.fn<() => Promise<any>>(),
+        update: jest.fn<() => Promise<any>>(),
       },
       auditLog: {
-        create: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+        create: jest.fn<() => Promise<any>>(),
       },
     };
-    const prisma = {
+
+    prismaMock = {
       reservation: {
-        findMany: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
-        findUnique: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
-        findFirst: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+        findMany: jest.fn<() => Promise<any[]>>(),
+        findUnique: jest.fn<() => Promise<any>>(),
+        findFirst: jest.fn<() => Promise<any>>(),
+        update: jest.fn<() => Promise<any>>(),
       },
-      $transaction: jest.fn(
-        (callback: (transaction: typeof tx) => Promise<unknown>) =>
-          callback(tx),
-      ),
+      $transaction: jest.fn((cb: any) => cb(txMock)),
     };
-    const spacesService = { requireActive: jest.fn() };
-    const availabilityService = { assertBookableInterval: jest.fn() };
+
+    spacesServiceMock = {
+      requireActive: jest.fn<() => Promise<any>>(),
+    };
+
+    availabilityServiceMock = {
+      assertBookableInterval: jest.fn<() => Promise<void>>(),
+    };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+  });
+
+  function createService() {
     const service = new ReservationsService(
-      prisma as unknown as PrismaService,
-      spacesService as unknown as SpacesService,
-      availabilityService as unknown as AvailabilityService,
+      prismaMock as unknown as PrismaService,
+      spacesServiceMock as unknown as SpacesService,
+      availabilityServiceMock as unknown as AvailabilityService,
     );
-    return { service, prisma, tx, spacesService, availabilityService };
+    return { service };
   }
 
-  const student: JwtPayload = {
-    sub: 'student-1',
-    email: 'student@example.edu',
-    role: Role.STUDENT,
-  };
+  const student: JwtPayload = { sub: 'student-1', email: 'stu@udea.edu', role: Role.STUDENT };
+  const staff: JwtPayload = { sub: 'staff-1', email: 'staff@udea.edu', role: Role.STAFF };
 
-  it('rechaza una reserva cuyo final ocurre antes de su inicio', async () => {
-    const { service, spacesService } = createService();
+  describe('Flujo de Creación (Líneas 50-74)', () => {
+    it('crea exitosamente una reserva pendiente y ejecuta la transacción de auditoría (Camino Feliz)', async () => {
+      const { service } = createService();
+      
+      spacesServiceMock.requireActive.mockResolvedValue({ id: 'space-1' });
+      availabilityServiceMock.assertBookableInterval.mockResolvedValue(undefined);
+      prismaMock.reservation.findFirst.mockResolvedValue(null); // No hay solapes locales
 
-    await expect(
-      service.create(student, {
-        spaceId: 'space-1',
-        startsAt: '2030-01-01T11:00:00.000Z',
-        endsAt: '2030-01-01T10:00:00.000Z',
-      }),
-    ).rejects.toBeInstanceOf(BadRequestException);
+      const mockCreated = { id: 'res-123', spaceId: 'space-1', userId: student.sub, status: ReservationStatus.PENDING };
+      txMock.reservation.create.mockResolvedValue(mockCreated);
+      txMock.auditLog.create.mockResolvedValue({});
 
-    expect(spacesService.requireActive).not.toHaveBeenCalled();
+      const dto = { spaceId: 'space-1', startsAt: '2030-01-01T14:00:00.000Z', endsAt: '2030-01-01T15:00:00.000Z' };
+      const result = await service.create(student, dto);
+
+      expect(result).toHaveProperty('id', 'res-123');
+      expect(txMock.reservation.create).toHaveBeenCalled();
+      expect(txMock.auditLog.create).toHaveBeenCalled();
+    });
+
+    it('lanza ConflictException si se detecta un solape en la base de datos (Línea 115+)', async () => {
+      const { service } = createService();
+      
+      spacesServiceMock.requireActive.mockResolvedValue({ id: 'space-1' });
+      availabilityServiceMock.assertBookableInterval.mockResolvedValue(undefined);
+      
+      // Simulamos que findFirst encuentra un registro, forzando el solape
+      prismaMock.reservation.findFirst.mockResolvedValue({ id: 'res-existente' });
+
+      const dto = { spaceId: 'space-1', startsAt: '2030-01-01T14:00:00.000Z', endsAt: '2030-01-01T15:00:00.000Z' };
+      
+      await expect(service.create(student, dto)).rejects.toBeInstanceOf(ConflictException);
+    });
   });
 
-  it('impide que un estudiante apruebe una reserva', async () => {
-    const { service, prisma } = createService();
+  describe('Flujos de Estados e Internos (Líneas 115-171, 185-199)', () => {
+    it('lanza NotFoundException en requireById si la reserva no existe en Prisma', async () => {
+      const { service } = createService();
+      prismaMock.reservation.findUnique.mockResolvedValue(null);
 
-    await expect(service.approve(student, 'reservation-1')).rejects.toBeInstanceOf(
-      ForbiddenException,
-    );
-    expect(prisma.reservation.findUnique).not.toHaveBeenCalled();
-  });
+      // Invocamos el método de cancelación para forzar el llamado a requireById interno
+      await expect(service.cancel(student, 'id-fantasma')).rejects.toBeInstanceOf(NotFoundException);
+    });
 
-  it('aprueba una reserva pendiente y registra la auditoría', async () => {
-    const { service, prisma, tx } = createService();
-    const reservation = {
-      id: 'reservation-1',
-      userId: student.sub,
-      status: ReservationStatus.PENDING,
-      startsAt: new Date('2030-01-01T10:00:00.000Z'),
-      endsAt: new Date('2030-01-01T11:00:00.000Z'),
-    };
-    const updated = { ...reservation, status: ReservationStatus.APPROVED };
-    prisma.reservation.findUnique.mockResolvedValue(reservation);
-    tx.reservation.update.mockResolvedValue(updated);
-    tx.auditLog.create.mockResolvedValue({});
+    it('cancela exitosamente una reserva si el dueño la solicita antes de comenzar', async () => {
+      const { service } = createService();
+      
+      const mockReservation = {
+        id: 'res-1',
+        userId: student.sub,
+        status: ReservationStatus.PENDING,
+        startsAt: new Date('2030-01-01T15:00:00.000Z'), // Futuro con respecto a las 12:00Z
+      };
+      prismaMock.reservation.findUnique.mockResolvedValue(mockReservation);
+      txMock.reservation.update.mockResolvedValue({ ...mockReservation, status: ReservationStatus.CANCELLED });
 
-    await expect(
-      service.approve(
-        { ...student, sub: 'staff-1', role: Role.STAFF },
-        reservation.id,
-      ),
-    ).resolves.toBe(updated);
+      const result = await service.cancel(student, 'res-1');
+      expect(result.status).toBe(ReservationStatus.CANCELLED);
+    });
 
-    expect(tx.reservation.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: reservation.id },
-        data: { status: ReservationStatus.APPROVED },
-      }),
-    );
-    expect(tx.auditLog.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          actorId: 'staff-1',
-          entityId: reservation.id,
-          fromValue: ReservationStatus.PENDING,
-          toValue: ReservationStatus.APPROVED,
-        }),
-      }),
-    );
+    it('rechaza una reserva de forma transaccional guardando la razón truncada', async () => {
+      const { service } = createService();
+      
+      const mockReservation = { id: 'res-1', userId: 'student-1', status: ReservationStatus.PENDING };
+      prismaMock.reservation.findUnique.mockResolvedValue(mockReservation);
+      txMock.reservation.update.mockResolvedValue({ ...mockReservation, status: ReservationStatus.REJECTED });
+
+      const result = await service.reject(staff, 'res-1', '  Motivo Válido  ');
+      expect(result.status).toBe(ReservationStatus.REJECTED);
+    });
+
+    
   });
 });

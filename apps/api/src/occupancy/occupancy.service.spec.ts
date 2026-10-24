@@ -22,15 +22,17 @@ describe('OccupancyService', () => {
         findMany: jest
           .fn<
             (
-              query: { where: { kind: AvailabilityKind } },
+              query: { where: { kind: any } },
             ) => Promise<Array<Record<string, unknown>>>
           >()
-          .mockImplementation((query) =>
-            Promise.resolve(
-              query.where.kind === AvailabilityKind.WEEKLY_HOURS
-                ? weeklyHours
-                : blocks,
-            )),
+          .mockImplementation((query: any) => {
+            // Manejamos la consulta flexible para inyectar las reglas correspondientes
+            const kind = query?.where?.kind;
+            if (kind === AvailabilityKind.WEEKLY_HOURS || (kind && kind.in && kind.in.includes(AvailabilityKind.WEEKLY_HOURS))) {
+              return Promise.resolve(weeklyHours);
+            }
+            return Promise.resolve(blocks);
+          }),
       },
       reservation: {
         findMany: jest
@@ -38,7 +40,11 @@ describe('OccupancyService', () => {
           .mockResolvedValue(reservations),
       },
     };
-    const spacesService = { getById: jest.fn() };
+    const spacesService = {
+      getById: jest
+        .fn<(...args: unknown[]) => Promise<{ id: string }>>()
+        .mockResolvedValue({ id: 'space-1' }),
+    };
     const service = new OccupancyService(
       prisma as unknown as PrismaService,
       spacesService as unknown as SpacesService,
@@ -68,7 +74,7 @@ describe('OccupancyService', () => {
       [
         {
           spaceId: space.id,
-          dayOfWeek: 1,
+          dayOfWeek: 1, // Lunes
           startTime: '09:00',
           endTime: '11:00',
         },
@@ -105,5 +111,29 @@ describe('OccupancyService', () => {
         },
       ],
     });
+  });
+
+  // --- NUEVA PRUEBA 1: Filtrado por un spaceId específico (Branch Coverage) ---
+  it('valida y filtra correctamente si se le pasa un spaceId específico', async () => {
+    const { service, spacesService, prisma } = createService();
+
+    await service.getWeek({ weekStart: '2026-10-19', spaceId: 'space-1' });
+
+    expect(spacesService.getById).toHaveBeenCalledWith('space-1');
+    expect(prisma.space.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'space-1' },
+      })
+    );
+  });
+
+  // --- NUEVA PRUEBA 2: Rama en corto si no existen espacios (Branch Coverage) ---
+  it('retorna un listado de espacios vacío si no hay registros en la base de datos', async () => {
+    const { service, prisma } = createService([]); // Pasamos el array de espacios vacío
+
+    const result = await service.getWeek({ weekStart: '2026-10-19' });
+
+    expect(result.spaces).toHaveLength(0);
+    expect(prisma.reservation.findMany).not.toHaveBeenCalled();
   });
 });

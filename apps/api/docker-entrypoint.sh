@@ -2,10 +2,10 @@
 set -e
 
 echo "Waiting for PostgreSQL and applying migrations..."
-npx prisma migrate deploy
+./node_modules/.bin/ prisma migrate deploy
 
 echo "Seeding development data..."
-npx prisma db seed
+./node_modules/.bin/ prisma db seed
 
 echo "Starting SportSpace API..."
 exec node dist/main.js

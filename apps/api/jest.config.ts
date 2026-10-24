@@ -12,6 +12,9 @@ module.exports = {
     '!src/main.ts',
     '!src/**/*.module.ts',
     '!src/prisma/**',
+      "apps/api/src/**/*.{ts,tsx}",
+  "!apps/api/src/**/*.spec.{ts,tsx}", // Excluye explícitamente los archivos .spec
+  "!apps/api/src/**/*.test.{ts,tsx}"
   ],
   coverageDirectory: './coverage',
 };

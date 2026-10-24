@@ -6,7 +6,7 @@ RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY apps/web apps/web
 RUN npm run build -w @sportspace/web

@@ -6,11 +6,12 @@ RUN apk add --no-cache python3 make g++ openssl libc6-compat
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY apps/api apps/api
 WORKDIR /app/apps/api
-RUN npx prisma generate
+
+RUN ../../node_modules/.bin/prisma generate
 RUN npm run build
 
 FROM node:20-alpine AS runner
