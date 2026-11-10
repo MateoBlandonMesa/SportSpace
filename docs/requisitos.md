@@ -5,7 +5,7 @@
 | Proyecto | SportSpace |
 | Asignatura | Proyecto Integrador I (2508700) — Grupo 6 |
 | Institución | Universidad de Antioquia |
-| Versión | 1.17 |
+| Versión | 1.18 |
 | Fecha | 2026-09-12 |
 | Estado | Baseline de fase 1 (análisis). Congela el MVP de PI1. |
 
@@ -283,9 +283,9 @@ Estimación en puntos (Fibonacci) orientativa para el equipo, no contractual con
 
 **Criterios de aceptación**
 
-1. Staff asigna días/horas de operación a un espacio (p. ej. lun–vie 06:00–22:00).
-2. Staff puede bloquear un intervalo (el calendario lo muestra no disponible).
-3. El motor de HU-09 resta bloqueos y reservas.
+1. Staff consulta el horario semanal actual y configura un rango distinto por cada día; el guardado reemplaza el horario completo del espacio.
+2. Staff consulta los bloqueos por rango de fechas, crea un bloqueo para mantenimiento o evento y puede eliminarlo.
+3. El motor de HU-09 refleja los bloqueos y no ofrece esas franjas para reserva.
 
 ### 4.4 Reservas
 
@@ -474,7 +474,7 @@ Escenarios Gherkin de las HU Must: [gherkin/](gherkin/).
 | RF-10 | El sistema debe permitir filtrar espacios por campus y tipo. | HU-08 | Should |
 | RF-11 | El sistema debe calcular la disponibilidad de un espacio para una fecha a partir de reglas de horario, bloqueos y reservas `PENDING`/`APPROVED`. | HU-09 | Must |
 | RF-12 | El sistema no debe ofrecer franjas en fechas u horas ya transcurridas. | HU-09 | Must |
-| RF-13 | El sistema debe permitir a staff definir horarios de operación y bloqueos por espacio. | HU-10 | Must |
+| RF-13 | El sistema debe permitir a STAFF/ADMIN consultar y reemplazar horarios semanales por día, y listar, crear y eliminar bloqueos por espacio y rango de fechas. | HU-10 | Must |
 | RF-14 | El sistema debe permitir a un `STUDENT` crear una reserva en franja libre, en estado `PENDING`. | HU-11 | Must |
 | RF-15 | El sistema debe validar intervalo (`inicio < fin`), espacio activo y pertenencia del usuario autenticado. | HU-11 | Must |
 | RF-16 | El sistema debe impedir solapes de reservas `PENDING` o `APPROVED` sobre el mismo espacio, en aplicación y en PostgreSQL. | HU-11, HU-12 | Must |
@@ -604,3 +604,4 @@ En fase 5 se automatizan (p. ej. Jest/Playwright) usando estos escenarios como e
 | 1.16 | 2026-10-13 | Plan de trabajo restante (P0 HU-07/HU-10 UI, P1 carrera/CI/E2E, P2 pulido) con dueños y ramas; HU-17/HU-18 siguen fuera de PI1. |
 | 1.17 | 2026-10-16 | API `feat/spaces-staff-list`: `GET /api/spaces` incluye inactivos para STAFF/ADMIN; el estudiante sigue viendo solo activos (HU-07). |
 | 1.17 | 2026-10-22 | Docker Compose levanta Postgres, API y front; la API aplica migraciones y seed al arrancar (`feat/docker-stack`). |
+| 1.18 | 2026-11-10 | HU-10: consulta/guardado del horario por día y consulta/creación/eliminación de bloqueos; se actualizan contratos API, pruebas y Postman. |

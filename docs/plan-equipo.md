@@ -147,11 +147,9 @@ Restante (detalle en el [README](../README.md#plan-de-trabajo-restante-fase-5)):
 
 | Prioridad | Bloque | Dilan | Carlos | Mateo |
 | --- | --- | --- | --- | --- |
-| P0 | Must de producto | `feat/spaces-staff-list` (listar inactivos a staff; API en esta rama) | — | `feat/web-spaces-admin` → `feat/web-hours-blocks` |
-| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` | `feat/e2e-gherkin` (después de P0) |
-| P0 | Must de producto | `feat/spaces-staff-list` (listar inactivos a staff) | — | `feat/web-spaces-admin` → `feat/web-hours-blocks` |
-| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` (lint/`tsc`; Compose ya levanta API+web) | `feat/e2e-gherkin` (después de P0) |
-| P2 | Pulido | Tests de transiciones | Helmet/CORS; tests 403 | Recorrido visual ≥ 1024 px |
+| P0 | Must de producto | API para listar inactivos integrada en `main` | — | `feat/web-spaces-admin` → `feat/web-hours-blocks` |
+| P1 | Evidencia | `feat/race-test` (HU-12 / RNF-05) | `feat/ci` (pruebas, build, tipos y Sonar) | `feat/e2e-gherkin` (después de P0) |
+| P2 | Pulido | Completar tests de transiciones | Secretos de despliegue; completar tests 403 | Recorrido visual ≥ 1024 px |
 
 HU-08 ya está. HU-17 y HU-18 no se implementan en PI1.
 

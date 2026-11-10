@@ -38,6 +38,20 @@ export type Space = {
   isActive: boolean;
 };
 
+export type AvailabilityBlock = {
+  id: string;
+  startsAt: string;
+  endsAt: string;
+  reason: string;
+};
+
+export type WeeklyHourRule = {
+  id?: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+};
+
 export type SlotStatus = 'FREE' | 'BUSY' | 'BLOCKED' | 'PAST';
 
 export type AvailabilitySlot = {

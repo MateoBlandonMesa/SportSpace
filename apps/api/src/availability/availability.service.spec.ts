@@ -76,29 +76,107 @@ describe('AvailabilityService', () => {
     });
   });
 
-  describe('setWeeklyHours', () => {
-    it('lanza BadRequestException si startTime es mayor o igual a endTime (Branch)', async () => {
+  describe('weekly hours', () => {
+    it('lists the saved schedule for a space in weekday order', async () => {
       const { service } = createService();
       spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
+      const rules = [{ id: 'rule-1', dayOfWeek: 1, startTime: '08:00', endTime: '12:00' }];
+      prismaMock.availabilityRule.findMany.mockResolvedValue(rules);
 
-      const dto = { startTime: '12:00', endTime: '11:00', daysOfWeek: [1] };
-      await expect(service.setWeeklyHours('space-1', dto)).rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.getWeeklyHours('space-1')).resolves.toBe(rules);
+      expect(prismaMock.availabilityRule.findMany).toHaveBeenCalledWith({
+        where: { spaceId: 'space-1', kind: AvailabilityKind.WEEKLY_HOURS },
+        select: { id: true, dayOfWeek: true, startTime: true, endTime: true },
+        orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+      });
     });
 
-    it('elimina y crea de forma transaccional las nuevas reglas semanales (Camino Feliz)', async () => {
+    it('rejects invalid intervals and duplicate weekdays', async () => {
       const { service } = createService();
       spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
-      
+
+      await expect(
+        service.setWeeklyHours('space-1', { rules: [{ dayOfWeek: 1, startTime: '12:00', endTime: '11:00' }] }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      await expect(
+        service.setWeeklyHours('space-1', {
+          rules: [
+            { dayOfWeek: 1, startTime: '08:00', endTime: '12:00' },
+            { dayOfWeek: 1, startTime: '13:00', endTime: '17:00' },
+          ],
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('replaces the complete weekly schedule transactionally with per-day rules', async () => {
+      const { service } = createService();
+      spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
       prismaMock.availabilityRule.deleteMany.mockResolvedValue({ count: 1 });
       prismaMock.availabilityRule.createMany.mockResolvedValue({ count: 2 });
       prismaMock.availabilityRule.findMany.mockResolvedValue([{ id: 'new-rule' }]);
+      const rules = [
+        { dayOfWeek: 1, startTime: '08:00', endTime: '12:00' },
+        { dayOfWeek: 2, startTime: '10:00', endTime: '16:00' },
+      ];
 
-      const dto = { startTime: '08:00', endTime: '12:00', daysOfWeek: [1] };
-      const result = await service.setWeeklyHours('space-1', dto);
+      const result = await service.setWeeklyHours('space-1', { rules });
 
-      expect(prismaMock.availabilityRule.deleteMany).toHaveBeenCalled();
-      expect(prismaMock.availabilityRule.createMany).toHaveBeenCalled();
+      expect(prismaMock.availabilityRule.deleteMany).toHaveBeenCalledWith({
+        where: { spaceId: 'space-1', kind: AvailabilityKind.WEEKLY_HOURS },
+      });
+      expect(prismaMock.availabilityRule.createMany).toHaveBeenCalledWith({
+        data: rules.map((rule) => ({ ...rule, spaceId: 'space-1', kind: AvailabilityKind.WEEKLY_HOURS })),
+      });
       expect(result).toHaveLength(1);
+    });
+  });
+
+  describe('blocks', () => {
+    it('lists blocks that overlap the requested date range', async () => {
+      const { service } = createService();
+      spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
+      const blocks = [{ id: 'block-1', reason: 'Mantenimiento' }];
+      prismaMock.availabilityRule.findMany.mockResolvedValue(blocks);
+
+      await expect(
+        service.listBlocks('space-1', { from: '2026-10-24T00:00:00-05:00', to: '2026-10-25T00:00:00-05:00' }),
+      ).resolves.toBe(blocks);
+      expect(prismaMock.availabilityRule.findMany).toHaveBeenCalledWith({
+        where: {
+          spaceId: 'space-1',
+          kind: AvailabilityKind.BLOCK,
+          startsAt: { not: null, lt: new Date('2026-10-25T00:00:00-05:00') },
+          endsAt: { not: null, gt: new Date('2026-10-24T00:00:00-05:00') },
+        },
+        select: { id: true, startsAt: true, endsAt: true, reason: true },
+        orderBy: { startsAt: 'asc' },
+      });
+    });
+
+    it('rejects invalid date ranges', async () => {
+      const { service } = createService();
+      spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
+      await expect(
+        service.listBlocks('space-1', { from: '2026-10-25T00:00:00Z', to: '2026-10-24T00:00:00Z' }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('deletes only a block belonging to the requested space', async () => {
+      const { service } = createService();
+      spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
+      prismaMock.availabilityRule.deleteMany.mockResolvedValue({ count: 1 });
+
+      await expect(service.deleteBlock('space-1', 'block-1')).resolves.toBeUndefined();
+      expect(prismaMock.availabilityRule.deleteMany).toHaveBeenCalledWith({
+        where: { id: 'block-1', spaceId: 'space-1', kind: AvailabilityKind.BLOCK },
+      });
+    });
+
+    it('returns not found when the block does not belong to the space', async () => {
+      const { service } = createService();
+      spacesServiceMock.getById.mockResolvedValue({ id: 'space-1' });
+      prismaMock.availabilityRule.deleteMany.mockResolvedValue({ count: 0 });
+      await expect(service.deleteBlock('space-1', 'missing')).rejects.toThrow('Block not found');
     });
   });
 

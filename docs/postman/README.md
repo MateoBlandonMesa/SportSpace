@@ -10,7 +10,7 @@ Archivo: [SportSpace.postman_collection.json](SportSpace.postman_collection.json
 
 Tras **POST space**, el `id` queda en `spaceId`. Las rutas protegidas envían `Authorization: Bearer {{accessToken}}`.
 
-Disponibilidad: **GET** `/api/spaces/{{spaceId}}/availability?date=YYYY-MM-DD`. Staff/admin: **PUT weekly-hours** y **POST blocks**.
+Disponibilidad: **GET** `/api/spaces/{{spaceId}}/availability?date=YYYY-MM-DD`. Staff/admin: **GET/PUT weekly-hours** (reglas por día; PUT reemplaza el horario completo), **GET blocks?from=...&to=...**, **POST blocks** y **DELETE blocks/{{blockId}}**.
 
 Reservas: **POST /api/reservations** (PENDING, guarda `reservationId`) → GET mías → cancel / approve / reject. Un solape responde 409.
 
