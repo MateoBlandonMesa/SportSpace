@@ -251,7 +251,7 @@ Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
 | 4 | `feat/race-test` | Prueba documentada de dos `POST /reservations` a la vez: a lo sumo una `PENDING`; la otra 409. Cubre HU-12 / RNF-05. | **Dilan** | En paralelo a P0 |
-| 5 | `feat/ci` | Lint + `tsc` en cada PR (`.github/workflows`). Docker Compose ya existe; dejar `docker compose up` reproducible si falta algo. | **Carlos** | En paralelo a P0 |
+| 5 | `feat/ci` | Lint + `tsc` en cada PR (`.github/workflows`). | **Carlos** | En paralelo a P0 |
 | 6 | `feat/e2e-gherkin` | Playwright contra `docs/gherkin/`: registro/login, catálogo, solicitar, conflicto, bandeja, ocupación, roles, y al final HU-07/HU-10. | **Mateo** | P0 mergeado |
 
 #### P2 — Pulido (si alcanza el tiempo)
@@ -320,17 +320,43 @@ SportSpace/
 │   ├── plan-equipo.md          # ramas y reparto Dilan / Carlos / Mateo
 │   ├── gherkin/                # escenarios de aceptación
 │   └── postman/                # colección Postman de la API
-├── docker-compose.yml
+├── docker-compose.yml          # Postgres + API + front
 ├── .env.example
 └── README.md
 ```
 
-El esqueleto vive en `feat/scaffold` (sesión 0). Cómo levantarlo:
+### Cómo levantarlo (clon nuevo)
+
+Compose levanta **PostgreSQL, la API y el front**. Al arrancar, la API aplica las migraciones Prisma y el seed.
+
+Requisitos: Docker Desktop y Git. No hace falta instalar Node ni Prisma a mano.
+
+```bash
+git clone https://github.com/MateoBlandonMesa/SportSpace.git
+cd SportSpace
+copy .env.example .env
+docker compose up --build
+```
+
+En Git Bash / macOS / Linux usa `cp .env.example .env` en lugar de `copy`.
+
+- Web: `http://localhost:5173` (nginx sirve el SPA y reenvía `/api` al backend)
+- API: `http://localhost:3000/api/health`
+- Postgres: `localhost:5432` (usuario/clave/base `sportspace`)
+
+Login de desarrollo (seed): `admin@udea.edu.co` / `Admin1234`.  
+Postman: importar `docs/postman/SportSpace.postman_collection.json` (`{{baseUrl}}` = `http://localhost:3000`).
+
+Para parar: `docker compose down`. Para BD limpia (borra volumen y datos): `docker compose down -v` y vuelve a `up --build`.
+
+### Desarrollo con recarga (API y front en el host)
+
+Si vas a editar código, deja solo Postgres en Docker y corre Nest/Vite en el host (Node 20+):
 
 ```bash
 copy .env.example .env
 copy .env.example apps\api\.env
-docker compose up -d
+docker compose up postgres -d
 npm install
 npm run prisma:generate
 npm run prisma:migrate
@@ -339,9 +365,7 @@ npm run dev:api
 npm run dev:web
 ```
 
-API: `http://localhost:3000/api/health` · Web: `http://localhost:5173`.  
-El visitante entra por `/login` o `/register`. Tras `npm run prisma:seed`, admin de desarrollo: `admin@udea.edu.co` / `Admin1234`.  
-Postman: importar `docs/postman/SportSpace.postman_collection.json`.
+No mezcles este modo con `docker compose up` completo: ambos usan los puertos 3000 y 5173.
 
 ---
 

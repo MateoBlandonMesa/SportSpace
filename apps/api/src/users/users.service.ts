@@ -9,6 +9,38 @@ const USER_SELECT = { id: true, name: true, email: true, role: true, createdAt: 
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // 1. IMPLEMENTACIÓN REAL DEL MÉTODO DE BÚSQUEDA POR ID
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: USER_SELECT,
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  // 2. IMPLEMENTACIÓN REAL DEL MÉTODO DE CREACIÓN (Evita la inyección de duplicados)
+  async create(dto: { email: string; name: string; password?: string }) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+
+    return await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        name: dto.name,
+        passwordHash: dto.password || 'default-hash',
+      },
+      select: USER_SELECT,
+    });
+  }
+
+  // 3. TUS MÉTODOS ORIGINALES SE QUEDAN EXACTAMENTE IGUAL
   list() {
     return this.prisma.user.findMany({
       select: USER_SELECT,

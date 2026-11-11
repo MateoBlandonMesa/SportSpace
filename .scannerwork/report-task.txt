@@ -1,0 +1,7 @@
+organization=inug4mi
+projectKey=inug4mi_sportspace1
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.113843
+dashboardUrl=https://sonarcloud.io/dashboard?id=inug4mi_sportspace1
+ceTaskId=AaFssx0FnC1ELI2PJx2N
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AaFssx0FnC1ELI2PJx2N

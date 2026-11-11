@@ -4,7 +4,7 @@ Archivo: [SportSpace.postman_collection.json](SportSpace.postman_collection.json
 
 ## Cómo usarla
 
-1. API en marcha: `npm run dev:api` (`http://localhost:3000`).
+1. API en marcha: `docker compose up --build` o `npm run dev:api` (`http://localhost:3000`).
 2. Postman → **Import** → el JSON de esta carpeta.
 3. Orden: **Auth → POST register → POST login** (guarda `accessToken`) → Spaces.
 
