@@ -198,7 +198,17 @@
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
-            "url": "{{baseUrl}}/api/spaces"
+            "url": "{{baseUrl}}/api/spaces",
+            "description": "JWT obligatorio. STUDENT solo ve espacios activos. STAFF y ADMIN también ven inactivos (HU-07)."
+          }
+        },
+        {
+          "name": "GET spaces as staff (includes inactive)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces",
+            "description": "Mismo GET. Inicia sesión como STAFF o ADMIN (POST login admin) para ver isActive false. El estudiante no los recibe."
           }
         },
         {

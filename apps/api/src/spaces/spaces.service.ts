@@ -1,18 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, Space } from '@prisma/client';
+import { Prisma, Role, Space } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSpaceDto } from './dto/create-space.dto';
 import { ListSpacesQueryDto } from './dto/list-spaces-query.dto';
 import { UpdateSpaceDto } from './dto/update-space.dto';
 
+const STAFF_CATALOG_ROLES: Role[] = [Role.STAFF, Role.ADMIN];
+
 @Injectable()
 export class SpacesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  listActive(query: ListSpacesQueryDto): Promise<Space[]> {
+  list(query: ListSpacesQueryDto, role: Role): Promise<Space[]> {
+    const includeInactive = STAFF_CATALOG_ROLES.includes(role);
     return this.prisma.space.findMany({
       where: {
-        isActive: true,
+        ...(includeInactive ? {} : { isActive: true }),
         ...(query.campus ? { campus: query.campus } : {}),
         ...(query.type ? { type: query.type } : {}),
       },

@@ -31,7 +31,7 @@ Desarrollar una plataforma centralizada para la consulta en tiempo real de la di
 
 Asignatura: Proyecto Integrador I (2508700) — Grupo 6 — Ingeniería de Sistemas, Universidad de Antioquia.
 
-Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
+Documentación de requisitos: [docs/requisitos.md](docs/requisitos.md) (alcance, MVP, HU, RF y RNF). Escenarios de prueba: [docs/gherkin/](docs/gherkin/). Reparto del equipo y ramas: [docs/plan-equipo.md](docs/plan-equipo.md). Colección Postman: [docs/postman/](docs/postman/). Auth vive en `apps/api` ([docs/auth-integracion.md](docs/auth-integracion.md)). El front inicia sesión con JWT, muestra el catálogo, el calendario y permite solicitar o cancelar reservas. Staff/admin aprueba o rechaza en la bandeja y ve ocupación semanal. Un `ADMIN` promociona usuarios (`PATCH /api/users/:id`). Catálogo: `GET /api/spaces` (estudiante: solo activos; STAFF/ADMIN: también inactivos). Disponibilidad: `GET /api/spaces/:id/availability?date=YYYY-MM-DD`. Reservas: `POST /api/reservations`. Dashboard: `GET /api/occupancy?weekStart=YYYY-MM-DD` (STAFF/ADMIN).
 
 ---
 
@@ -242,7 +242,7 @@ Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
-| 1 | `feat/spaces-staff-list` | `GET /api/spaces` para STAFF/ADMIN lista también inactivos; el estudiante sigue viendo solo activos. Hoy el listado es solo `isActive: true`, y sin eso no se puede desactivar y verificar HU-07. | **Dilan** | `main` |
+| 1 | `feat/spaces-staff-list` | **Hecho en esta rama.** `GET /api/spaces` para STAFF/ADMIN lista también inactivos; el estudiante sigue viendo solo activos. | **Dilan** | `main` |
 | 2 | `feat/web-spaces-admin` | Pantalla staff: crear, editar y desactivar espacios. 403 ya existe. | **Mateo** | (1) en `main` |
 | 3 | `feat/web-hours-blocks` | Pantalla staff: horario semanal y bloqueos por espacio. El API (`PUT weekly-hours`, `POST blocks`) ya está. | **Mateo** | (2) o en paralelo si no se pisan archivos |
 
