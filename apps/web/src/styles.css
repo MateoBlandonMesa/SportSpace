@@ -596,3 +596,141 @@ a {
   height: 100%;
   background: #0f6b3c;
 }
+
+.admin-availability-page {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-availability-page h2,
+.admin-availability-page p {
+  margin-top: 0;
+}
+
+.admin-availability-space {
+  display: grid;
+  gap: 0.3rem;
+  width: min(100%, 26rem);
+  font-weight: 600;
+}
+
+.admin-availability-space select,
+.weekly-day-card__times input {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.weekly-hours-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+.weekly-hours-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 0.75rem;
+}
+
+.weekly-day-card {
+  min-width: 0;
+  margin: 0;
+  padding: 0.85rem;
+  border: 1px solid #dce6df;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(20 34 27 / 5%);
+}
+
+.weekly-day-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.weekly-day-card legend {
+  padding: 0;
+  font-weight: 700;
+}
+
+.weekly-day-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.weekly-day-card__times {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.weekly-day-card__times label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.weekly-day-card .muted {
+  margin: 0.65rem 0 0;
+}
+.weekly-hours-section,
+.availability-blocks-section {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dce6df;
+}
+
+.weekly-hours-section h3,
+.availability-blocks-section h3,
+.weekly-hours-section p,
+.availability-blocks-section p {
+  margin-top: 0;
+}
+
+.block-create-form,
+.block-range-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem;
+  margin: 0.25rem 0;
+}
+
+.block-create-form label,
+.block-range-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.block-create-form input,
+.block-range-form input {
+  min-width: 11rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #c5d1ca;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+}
+
+.block-create-form__reason {
+  flex: 1 1 14rem;
+}
+
+.block-create-form__reason input {
+  width: 100%;
+}
+
+.block-list .reservation-card__actions {
+  min-width: 8rem;
+}

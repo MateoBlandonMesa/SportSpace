@@ -182,7 +182,7 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 **Entregable:** [docs/requisitos.md](docs/requisitos.md) (HU, RF, RNF, alcance y MVP) + [docs/gherkin/](docs/gherkin/) + este README.
 
-### Fase 2 — Diseño y preparación técnica (semanas 5–6) ← fase actual
+### Fase 2 — Diseño y preparación técnica (semanas 5–6)
 
 **Meta:** arquitectura, datos, contratos de API y entorno listo para programar.
 
@@ -232,9 +232,11 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 ### Plan de trabajo restante (fase 5)
 
-El ciclo estudiante + bandeja + ocupación + roles ya está en `main`. HU-08 (filtros) también. HU-17 y HU-18 siguen **fuera de PI1**.
+El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest). Si al armar una UI falta un campo del DTO, Dilan lo ajusta en un PR corto.
+El API de horarios y bloqueos ya permite consultar/guardar el horario por día, listar bloqueos por rango y eliminarlos. Pendientes principales: cerrar las pantallas staff de espacios y horarios/bloqueos; automatizar CI, probar concurrencia contra PostgreSQL y completar E2E sobre Gherkin. HU-17 y HU-18 siguen **fuera de PI1**.
+
+Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
 #### P0 — Cerrar Must de producto (antes de la demo)
 
@@ -242,16 +244,16 @@ Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
-| 1 | `feat/spaces-staff-list` | **Hecho en esta rama.** `GET /api/spaces` para STAFF/ADMIN lista también inactivos; el estudiante sigue viendo solo activos. | **Dilan** | `main` |
+| 1 | `feat/spaces-staff-list` | **Integrado en `main`.** STAFF/ADMIN listan también espacios inactivos; los estudiantes siguen viendo solo activos. | **Dilan** | Hecho |
 | 2 | `feat/web-spaces-admin` | Pantalla staff: crear, editar y desactivar espacios. 403 ya existe. | **Mateo** | (1) en `main` |
-| 3 | `feat/web-hours-blocks` | Pantalla staff: horario semanal y bloqueos por espacio. El API (`PUT weekly-hours`, `POST blocks`) ya está. | **Mateo** | (2) o en paralelo si no se pisan archivos |
+| 3 | `feat/web-hours-blocks` | Pantalla staff: consultar/configurar horarios por día y consultar/crear/eliminar bloqueos. El API ya está disponible. | **Mateo** | (2) o en paralelo si no se pisan archivos |
 
 #### P1 — Evidencia (criterio de salida del MVP)
 
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
-| 4 | `feat/race-test` | Prueba documentada de dos `POST /reservations` a la vez: a lo sumo una `PENDING`; la otra 409. Cubre HU-12 / RNF-05. | **Dilan** | En paralelo a P0 |
-| 5 | `feat/ci` | Lint + `tsc` en cada PR (`.github/workflows`). | **Carlos** | En paralelo a P0 |
+| 4 | `feat/race-test` | Prueba de integración con dos `POST /reservations` simultáneos contra PostgreSQL: como máximo una `PENDING` y la otra responde 409. Las unitarias actuales no verifican la carrera ni la restricción real de BD. | **Dilan** | En paralelo a P0 |
+| 5 | `feat/ci` | Crear workflow para ejecutar pruebas, build y comprobaciones de tipos en cada PR; incorporar lint y análisis Sonar/cobertura. La configuración de Sonar y las unitarias ya están, pero no encontré workflow de CI en el repo. | **Carlos** | En paralelo a P0 |
 | 6 | `feat/e2e-gherkin` | Playwright contra `docs/gherkin/`: registro/login, catálogo, solicitar, conflicto, bandeja, ocupación, roles, y al final HU-07/HU-10. | **Mateo** | P0 mergeado |
 
 #### P2 — Pulido (si alcanza el tiempo)
@@ -259,15 +261,15 @@ Sin esto, HU-07 y HU-10 no se recorren en la app (sí en Postman).
 | Ítem | Quién | Nota |
 | --- | --- | --- |
 | Recorrido visual escritorio ≥ 1024 px (RNF-09) | **Mateo** | No bloquea HU |
-| Helmet / CORS / secrets (RNF-10) | **Carlos** | Revisión, no feature nueva |
-| Tests de transiciones y 403 (HU-16, HU-04) | **Dilan** + **Carlos** | Jest API; complementa E2E |
+| Revisión de secretos y endurecimiento para despliegue | **Carlos** | Helmet y CORS ya están; validar configuración sin valores de desarrollo |
+| Completar pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | Ya hay cobertura unitaria parcial; faltan casos de transición y guardas |
 | HU-17 / HU-18 | Nadie | Could; fuera de PI1 |
 
 #### Orden de merge
 
 ```
 main
- ├─ Dilan:  feat/spaces-staff-list  → feat/race-test
+ ├─ Dilan:  feat/race-test (API de espacios inactivos ya integrada)
  ├─ Carlos: feat/ci
  └─ Mateo:  feat/web-spaces-admin → feat/web-hours-blocks → feat/e2e-gherkin
 ```

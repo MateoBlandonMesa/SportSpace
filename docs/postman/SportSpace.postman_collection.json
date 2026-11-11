@@ -9,6 +9,7 @@
     { "key": "baseUrl", "value": "http://localhost:3000" },
     { "key": "accessToken", "value": "" },
     { "key": "spaceId", "value": "00000000-0000-4000-8000-000000000000" },
+    { "key": "blockId", "value": "00000000-0000-4000-8000-000000000000" },
     { "key": "reservationId", "value": "00000000-0000-4000-8000-000000000000" },
     { "key": "userId", "value": "00000000-0000-4000-8000-000000000000" },
     { "key": "adminUserId", "value": "00000000-0000-4000-8000-000000000000" }
@@ -318,6 +319,15 @@
           }
         },
         {
+          "name": "GET weekly hours",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/weekly-hours",
+            "description": "STAFF/ADMIN. Devuelve las reglas actuales por día de semana. 1=lunes … 7=domingo."
+          }
+        },
+        {
           "name": "PUT weekly hours",
           "request": {
             "method": "PUT",
@@ -327,14 +337,37 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"daysOfWeek\": [1, 2, 3, 4, 5],\n  \"startTime\": \"06:00\",\n  \"endTime\": \"22:00\"\n}"
+              "raw": "{\n  \"rules\": [\n    { \"dayOfWeek\": 1, \"startTime\": \"06:00\", \"endTime\": \"22:00\" },\n    { \"dayOfWeek\": 2, \"startTime\": \"06:00\", \"endTime\": \"22:00\" },\n    { \"dayOfWeek\": 3, \"startTime\": \"06:00\", \"endTime\": \"22:00\" },\n    { \"dayOfWeek\": 4, \"startTime\": \"06:00\", \"endTime\": \"22:00\" },\n    { \"dayOfWeek\": 5, \"startTime\": \"06:00\", \"endTime\": \"22:00\" }\n  ]\n}"
             },
             "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/weekly-hours",
-            "description": "STAFF/ADMIN. daysOfWeek 1=lunes … 7=domingo. Reemplaza el horario semanal del espacio."
+            "description": "STAFF/ADMIN. Reemplaza el horario completo. rules contiene un rango por día (1=lunes … 7=domingo); usa [] para cerrar toda la semana."
+          }
+        },
+        {
+          "name": "GET blocks by range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/blocks?from=2026-10-13T00:00:00-05:00&to=2026-10-14T00:00:00-05:00",
+            "description": "STAFF/ADMIN. Devuelve bloqueos que se solapan con el rango ISO 8601 [from,to)."
           }
         },
         {
           "name": "POST block",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.id) pm.collectionVariables.set('blockId', body.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -347,6 +380,15 @@
             },
             "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/blocks",
             "description": "STAFF/ADMIN. Bloquea un intervalo; esas franjas salen BLOCKED."
+          }
+        },
+        {
+          "name": "DELETE block",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}/api/spaces/{{spaceId}}/availability/blocks/{{blockId}}",
+            "description": "STAFF/ADMIN. Elimina el bloqueo de este espacio; responde 204."
           }
         }
       ]

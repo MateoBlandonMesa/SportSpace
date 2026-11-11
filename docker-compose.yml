@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-sportspace}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-sportspace}
+      POSTGRES_DB: ${DB_NAME:-sportspace}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sportspace -d sportspace"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-sportspace} -d ${DB_NAME:-sportspace}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -22,7 +22,7 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public
+      DATABASE_URL: postgresql://${DB_USER:-sportspace}:${DB_PASSWORD:-sportspace}@${DB_HOST:-postgres}:${DB_PORT:-5432}/${DB_NAME:-sportspace}?schema=public
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-change-me-access-secret}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change-me-refresh-secret}
       JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}

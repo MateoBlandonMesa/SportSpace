@@ -1,18 +1,32 @@
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsInt, IsMilitaryTime, Max, Min } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsInt,
+  IsMilitaryTime,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
-export class SetWeeklyHoursDto {
-  @IsArray()
-  @ArrayNotEmpty()
+export class WeeklyHourRuleDto {
   @Type(() => Number)
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  @Max(7, { each: true })
-  daysOfWeek!: number[];
+  @IsInt()
+  @Min(1)
+  @Max(7)
+  dayOfWeek!: number;
 
   @IsMilitaryTime()
   startTime!: string;
 
   @IsMilitaryTime()
   endTime!: string;
+}
+
+export class SetWeeklyHoursDto {
+  @IsArray()
+  @ArrayMaxSize(7)
+  @ValidateNested({ each: true })
+  @Type(() => WeeklyHourRuleDto)
+  rules!: WeeklyHourRuleDto[];
 }

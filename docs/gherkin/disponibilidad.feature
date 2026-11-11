@@ -57,3 +57,21 @@ Característica: Disponibilidad en tiempo real
     Y bloquea "2026-10-05" de "09:00" a "12:00" por "mantenimiento"
     Entonces esa franja se muestra no disponible en la consulta de disponibilidad
     Y no se puede solicitar una reserva en el intervalo bloqueado
+
+  @HU-10 @RF-13
+  Escenario: Staff consulta y configura horarios distintos por día
+    Dado que "carlos.staff@udea.edu.co" inició sesión con rol "STAFF"
+    Y que el espacio tiene horario el lunes de "06:00" a "22:00" y el martes de "08:00" a "18:00"
+    Cuando consulta el horario semanal de "Pista sintética"
+    Entonces se muestran las reglas actuales ordenadas por día
+    Cuando guarda un nuevo horario semanal con el lunes de "07:00" a "21:00" y el martes de "09:00" a "17:00"
+    Entonces el horario guardado conserva el rango individual de cada día
+
+  @HU-10 @RF-13
+  Escenario: Staff consulta y elimina un bloqueo
+    Dado que "carlos.staff@udea.edu.co" inició sesión con rol "STAFF"
+    Y que existe un bloqueo de "Pista sintética" el "2026-10-05" de "09:00" a "12:00" por "mantenimiento"
+    Cuando consulta los bloqueos de "Pista sintética" entre "2026-10-05T00:00:00-05:00" y "2026-10-06T00:00:00-05:00"
+    Entonces el bloqueo de mantenimiento aparece en la lista
+    Cuando elimina el bloqueo consultado
+    Entonces las franjas vuelven a estar disponibles si no existe otra reserva o bloqueo

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthProvider';
 import { GuestOnly, RequireAuth, RequireStaff } from './auth/route-guards';
 import { AppLayout } from './layout/AppLayout';
+import { AdminAvailabilityPage } from './pages/AdminAvailabilityPage';
 import { AdminInboxPage } from './pages/AdminInboxPage';
 import { AdminOccupancyPage } from './pages/AdminOccupancyPage';
 import { AdminPage } from './pages/AdminPage';
@@ -34,6 +35,7 @@ export function App() {
                 <Route index element={<Navigate to="inbox" replace />} />
                 <Route path="inbox" element={<AdminInboxPage />} />
                 <Route path="occupancy" element={<AdminOccupancyPage />} />
+                <Route path="availability" element={<AdminAvailabilityPage />} />
                 <Route path="roles" element={<AdminRolesPage />} />
               </Route>
             </Route>

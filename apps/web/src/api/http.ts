@@ -126,6 +126,10 @@ export function apiGet<T>(path: string): Promise<T> {
   return apiRequest<T>(path, { method: 'GET' });
 }
 
+export function apiPut<T>(path: string, body?: unknown): Promise<T> {
+  return apiRequest<T>(path, { method: 'PUT', body });
+}
+
 export function apiPost<T>(path: string, body?: unknown): Promise<T> {
   return apiRequest<T>(path, { method: 'POST', body });
 }

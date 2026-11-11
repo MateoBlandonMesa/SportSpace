@@ -1,8 +1,9 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { AvailabilityKind, ReservationStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from '../spaces/spaces.service';
 import { CreateBlockDto } from './dto/create-block.dto';
+import { ListBlocksQueryDto } from './dto/list-blocks-query.dto';
 import { SetWeeklyHoursDto } from './dto/set-weekly-hours.dto';
 import {
   SLOT_MINUTES,
@@ -100,32 +101,79 @@ export class AvailabilityService {
     };
   }
 
+  async getWeeklyHours(spaceId: string) {
+    await this.spacesService.getById(spaceId);
+    return this.prisma.availabilityRule.findMany({
+      where: { spaceId, kind: AvailabilityKind.WEEKLY_HOURS },
+      select: { id: true, dayOfWeek: true, startTime: true, endTime: true },
+      orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+    });
+  }
+
   async setWeeklyHours(spaceId: string, dto: SetWeeklyHoursDto) {
     await this.spacesService.getById(spaceId);
-    if (dto.startTime >= dto.endTime) {
-      throw new BadRequestException('endTime must be after startTime');
-    }
 
-    const daysOfWeek = [...new Set(dto.daysOfWeek)].sort((a, b) => a - b);
+    const seenDays = new Set<number>();
+    for (const rule of dto.rules) {
+      if (seenDays.has(rule.dayOfWeek)) {
+        throw new BadRequestException(`dayOfWeek ${rule.dayOfWeek} appears more than once`);
+      }
+      if (rule.startTime >= rule.endTime) {
+        throw new BadRequestException('endTime must be after startTime');
+      }
+      seenDays.add(rule.dayOfWeek);
+    }
 
     return this.prisma.$transaction(async (tx) => {
       await tx.availabilityRule.deleteMany({
         where: { spaceId, kind: AvailabilityKind.WEEKLY_HOURS },
       });
-      await tx.availabilityRule.createMany({
-        data: daysOfWeek.map((dayOfWeek) => ({
-          spaceId,
-          kind: AvailabilityKind.WEEKLY_HOURS,
-          dayOfWeek,
-          startTime: dto.startTime,
-          endTime: dto.endTime,
-        })),
-      });
+      if (dto.rules.length > 0) {
+        await tx.availabilityRule.createMany({
+          data: dto.rules.map((rule) => ({
+            spaceId,
+            kind: AvailabilityKind.WEEKLY_HOURS,
+            dayOfWeek: rule.dayOfWeek,
+            startTime: rule.startTime,
+            endTime: rule.endTime,
+          })),
+        });
+      }
       return tx.availabilityRule.findMany({
         where: { spaceId, kind: AvailabilityKind.WEEKLY_HOURS },
-        orderBy: { dayOfWeek: 'asc' },
+        orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
       });
     });
+  }
+
+  async listBlocks(spaceId: string, query: ListBlocksQueryDto) {
+    await this.spacesService.getById(spaceId);
+    const from = new Date(query.from);
+    const to = new Date(query.to);
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from) {
+      throw new BadRequestException('to must be after from');
+    }
+
+    return this.prisma.availabilityRule.findMany({
+      where: {
+        spaceId,
+        kind: AvailabilityKind.BLOCK,
+        startsAt: { not: null, lt: to },
+        endsAt: { not: null, gt: from },
+      },
+      select: { id: true, startsAt: true, endsAt: true, reason: true },
+      orderBy: { startsAt: 'asc' },
+    });
+  }
+
+  async deleteBlock(spaceId: string, blockId: string): Promise<void> {
+    await this.spacesService.getById(spaceId);
+    const result = await this.prisma.availabilityRule.deleteMany({
+      where: { id: blockId, spaceId, kind: AvailabilityKind.BLOCK },
+    });
+    if (result.count === 0) {
+      throw new NotFoundException('Block not found');
+    }
   }
 
   async createBlock(spaceId: string, dto: CreateBlockDto) {
