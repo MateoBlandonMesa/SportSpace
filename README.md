@@ -235,7 +235,7 @@ Reparto vigente (swap): **Dilan** = espacios / disponibilidad / reservas; **Carl
 
 El núcleo funcional, el ciclo de reservas, ocupación, roles y filtros HU-08 ya están en `main`. Se añadieron pruebas unitarias Jest para servicios de API y sesión del front, junto con configuración de cobertura para Sonar; los commits recientes reportan 82 % de cobertura. Helmet, CORS y límites de solicitudes en login y creación de reservas ya están implementados.
 
-El API y la pantalla de horarios/bloqueos (HU-10) ya están en `main`. Pendiente principal: automatizar CI. HU-17 y HU-18 siguen **fuera de PI1**.
+El API y las pantallas de administración de espacios y horarios/bloqueos (HU-07/HU-10) ya están en `main`. La prueba de concurrencia, los recorridos Playwright y los casos de transiciones/403 también están integrados. El workflow de CI está implementado en `feat/ci`; para habilitar el análisis Sonar en GitHub falta configurar el secreto `SONAR_TOKEN`. HU-17 y HU-18 siguen **fuera de PI1**.
 
 Reparto: **Dilan** API (no React) · **Carlos** auth / CI / Docker · **Mateo** front / E2E (no Nest).
 
@@ -254,8 +254,8 @@ HU-07 en UI ya está en `main`.
 | Orden | Rama | Qué | Quién | Depende de |
 | --- | --- | --- | --- | --- |
 | 4 | `feat/race-test` | **Integrado en `main`.** `npm run test:int`: dos `POST /reservations` simultáneos; una `PENDING` y la otra 409. | **Dilan** | Hecho |
-| 5 | `feat/ci` | Crear workflow para ejecutar pruebas, build y comprobaciones de tipos en cada PR; incorporar lint y análisis Sonar/cobertura. La configuración de Sonar y las unitarias ya están, pero no encontré workflow de CI en el repo. | **Carlos** | En paralelo |
-| 6 | `feat/e2e-gherkin` | Playwright (`npm run test:e2e`) sobre los Gherkin: auth, catálogo, reservar, conflicto, bandeja, ocupación, roles, HU-07 y HU-10. Requiere API en `:3000`. | **Mateo** | En `feat/e2e-gherkin` |
+| 5 | `feat/ci` | Workflow agregado: lint, tipos, cobertura unitaria, build, integración PostgreSQL, Playwright y Sonar. Sonar requiere `SONAR_TOKEN` en GitHub. | **Carlos** | Implementado en esta rama |
+| 6 | `feat/e2e-gherkin` | **Integrado en `main`.** Playwright (`npm run test:e2e`) recorre autenticación, catálogo, reservas y administración, incl. HU-07 y HU-10. | **Mateo** | Hecho |
 
 #### P2 — Pulido (si alcanza el tiempo)
 
@@ -263,18 +263,17 @@ HU-07 en UI ya está en `main`.
 | --- | --- | --- |
 | Recorrido visual escritorio ≥ 1024 px (RNF-09) | **Mateo** | No bloquea HU |
 | Revisión de secretos y endurecimiento para despliegue | **Carlos** | Helmet y CORS ya están; validar configuración sin valores de desarrollo |
-| Completar pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | En `feat/transition-403-tests`: 409 de máquina de estados y 403 de `RolesGuard` / cancelar reserva ajena |
+| Pruebas de transiciones y autorización 403 (HU-16, HU-04) | **Dilan** + **Carlos** | **Integradas en `main`**: 409 de máquina de estados y 403 de `RolesGuard` / cancelar reserva ajena |
 | HU-17 / HU-18 | Nadie | Could; fuera de PI1 |
 
 #### Orden de merge
 
 ```
 main
- ├─ Carlos: feat/ci
- └─ Dilan + Carlos: feat/transition-403-tests
+ └─ Carlos: feat/ci
 ```
 
-Para sustentación, el camino crítico de front y el E2E ya están en `main`. CI y los tests de transiciones/403 pueden ir en paralelo.
+Para sustentación, el camino crítico de producto y las pruebas E2E ya están en `main`. El trabajo pendiente es integrar este CI y completar la revisión visual y de despliegue.
 
 ### Fase 6 — Informe y sustentación (semana 16)
 
@@ -382,6 +381,14 @@ npm run test:e2e
 Los specs viven en `apps/web/e2e/` y corren en serie (`workers: 1`) para no chocar con el rate limit de login ni con las franjas.
 
 ---
+
+## Automatización CI
+
+El workflow `.github/workflows/ci.yml` se ejecuta en cada PR hacia `main` y en cada push a `main`. Incluye lint, chequeos de tipos, pruebas unitarias con reportes LCOV, build, prueba de concurrencia contra PostgreSQL, Playwright E2E y análisis SonarQube Cloud.
+
+Para habilitar Sonar, agrega `SONAR_TOKEN` en **Settings → Secrets and variables → Actions** del repositorio. Si el secreto falta, las demás comprobaciones corren y el paso de Sonar se omite con un aviso.
+
+Comprobaciones locales: `npm run lint`, `npm run typecheck`, `npm run test:coverage`, `npm run build`, `npm run test:int` y `npm run test:e2e`. Las dos últimas requieren PostgreSQL; E2E requiere además que la API esté disponible.
 
 ## Cómo se medirá el éxito
 

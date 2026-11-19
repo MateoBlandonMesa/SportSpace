@@ -16,9 +16,24 @@
     "test:int": "npm run test:int -w @sportspace/api",
     "test:e2e": "npm run test:e2e -w @sportspace/web",
     "docker:up": "docker compose up --build -d",
-    "docker:down": "docker compose down"
+    "docker:down": "docker compose down",
+    "lint": "eslint apps/api/src apps/api/test apps/web/src apps/web/e2e",
+    "typecheck": "npm run typecheck -w @sportspace/api && npm run typecheck -w @sportspace/web && npm run typecheck:e2e -w @sportspace/web",
+    "test:coverage": "npm run test:cov -w @sportspace/api && npm run test:cov -w @sportspace/web",
+    "build": "npm run build:api && npm run build:web"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "eslint": "^10.15.0",
+    "typescript-eslint": "^8.73.0"
+  },
+  "allowScripts": {
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "argon2@0.45.1": true,
+    "esbuild@0.21.5": true,
+    "prisma@6.19.3": true
   }
 }

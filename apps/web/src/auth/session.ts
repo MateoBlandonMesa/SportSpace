@@ -29,12 +29,16 @@ export function writeStorage(key: string, value: string | null): void {
 }
 
 export function getAccessToken(): string | null {
-  try{
+  try {
     const value = sessionStorage.getItem(ACCESS_TOKEN_KEY);
-    if (!value) return null;
-    return decodeURIComponent(atob(value));
+    if (!value) {
+      accessToken = null;
+      return null;
+    }
+    accessToken = decodeURIComponent(atob(value));
+    return accessToken;
   } catch {
-    return null;
+    return accessToken;
   }
 }
 

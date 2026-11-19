@@ -1,0 +1,170 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, types, tests, build, Sonar
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://sportspace:sportspace@localhost:5432/sportspace?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-not-for-production
+      JWT_REFRESH_SECRET: ci-refresh-secret-not-for-production
+      ADMIN_EMAIL: admin@udea.edu.co
+      ADMIN_PASSWORD: Admin1234
+      ADMIN_NAME: SportSpace CI Admin
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests and coverage
+        run: npm run test:coverage
+
+      - name: Build API and web
+        run: npm run build
+
+      - name: SonarQube Cloud scan
+        if: ${{ env.SONAR_TOKEN != '' }}
+        uses: SonarSource/sonarqube-scan-action@v8.3.0
+        with:
+          args: -Dsonar.qualitygate.wait=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Sonar configuration reminder
+        if: ${{ env.SONAR_TOKEN == '' }}
+        run: echo "SONAR_TOKEN is not configured; Sonar scan was skipped. Add it in repository Actions secrets to enable analysis on PRs."
+
+  integration:
+    name: PostgreSQL integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sportspace
+          POSTGRES_PASSWORD: sportspace
+          POSTGRES_DB: sportspace
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sportspace -d sportspace"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://sportspace:sportspace@localhost:5432/sportspace?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-not-for-production
+      JWT_REFRESH_SECRET: ci-refresh-secret-not-for-production
+      ADMIN_EMAIL: admin@udea.edu.co
+      ADMIN_PASSWORD: Admin1234
+      ADMIN_NAME: SportSpace CI Admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+      - name: Apply migrations
+        run: npx prisma migrate deploy --schema apps/api/prisma/schema.prisma
+      - name: Test concurrent reservations
+        run: npm run test:int -w @sportspace/api
+
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sportspace
+          POSTGRES_PASSWORD: sportspace
+          POSTGRES_DB: sportspace
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sportspace -d sportspace"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://sportspace:sportspace@localhost:5432/sportspace?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-not-for-production
+      JWT_REFRESH_SECRET: ci-refresh-secret-not-for-production
+      ADMIN_EMAIL: admin@udea.edu.co
+      ADMIN_PASSWORD: Admin1234
+      ADMIN_NAME: SportSpace CI Admin
+      NODE_ENV: test
+      WEB_ORIGIN: http://localhost:5173
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+      - name: Apply migrations and seed demo data
+        run: |
+          npx prisma migrate deploy --schema apps/api/prisma/schema.prisma
+          npm run prisma:seed
+      - name: Build API
+        run: npm run build:api
+      - name: Start API
+        run: |
+          npm run start:prod -w @sportspace/api > /tmp/sportspace-api.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3000/api/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/sportspace-api.log
+          exit 1
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E suite
+        run: npm run test:e2e

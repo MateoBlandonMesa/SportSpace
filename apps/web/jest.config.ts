@@ -1,20 +1,17 @@
 export default {
   rootDir: '.',
-  testEnvironment: 'node',
-  testRegex: '.*\\.spec\\.ts$',
+  testEnvironment: 'jsdom',
+  testRegex: 'src/.*\\.spec\\.ts$',
   moduleFileExtensions: ['js', 'json', 'ts'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
   collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.spec.ts',
-    '!src/main.ts',
-    '!src/**/*.module.ts',
-    '!src/prisma/**',
-      "apps/web/src/**/*.{ts,tsx}",
-  "!apps/web/src/**/*.spec.{ts,tsx}", // Excluye explícitamente los archivos .spec
-  "!apps/web/src/**/*.test.{ts,tsx}"
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.spec.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/vite-env.d.ts',
   ],
   coverageDirectory: './coverage',
+  coverageReporters: ['text', 'lcov', 'clover'],
 };

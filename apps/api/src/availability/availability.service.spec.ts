@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { AvailabilityKind, ReservationStatus } from '@prisma/client';
+import { AvailabilityKind } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SpacesService } from '../spaces/spaces.service';
 import { AvailabilityService } from './availability.service';

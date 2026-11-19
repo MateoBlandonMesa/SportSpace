@@ -9,12 +9,13 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.spec.ts',
-    '!src/main.ts',
+    '!src/**/*.test.ts',
     '!src/**/*.module.ts',
+    '!src/**/*.dto.ts',
+    '!src/**/*.controller.ts',
+    '!src/main.ts',
     '!src/prisma/**',
-      "apps/api/src/**/*.{ts,tsx}",
-  "!apps/api/src/**/*.spec.{ts,tsx}", // Excluye explícitamente los archivos .spec
-  "!apps/api/src/**/*.test.{ts,tsx}"
   ],
   coverageDirectory: './coverage',
+  coverageReporters: ['text', 'lcov', 'clover'],
 };

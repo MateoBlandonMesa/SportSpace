@@ -18,7 +18,7 @@ describe('Pruebas de Seguridad y Cobertura - Session Storage', () => {
     const securedValue = btoa(encodeURIComponent(token));
     
     // Espiamos sessionStorage para ver qué clave busca exactamente tu función real
-    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
+    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((_key) => {
       return securedValue;
     });
 
@@ -33,7 +33,7 @@ describe('Pruebas de Seguridad y Cobertura - Session Storage', () => {
     const securedValue = btoa(encodeURIComponent(JSON.stringify(mockUser)));
     
     // Espiamos sessionStorage para interceptar la clave real del usuario
-    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
+    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation((_key) => {
       return securedValue;
     });
 

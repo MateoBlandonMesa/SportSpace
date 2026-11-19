@@ -12,7 +12,8 @@
     "test": "jest --config jest.config.ts",
     "test:watch": "jest --config jest.config.ts --watch",
     "test:cov": "jest --config jest.config.ts --coverage",
-    "test:int": "jest --config jest-int.config.ts --runInBand"
+    "test:int": "jest --config jest-int.config.ts --runInBand",
+    "typecheck": "tsc --noEmit --incremental false -p tsconfig.json"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
