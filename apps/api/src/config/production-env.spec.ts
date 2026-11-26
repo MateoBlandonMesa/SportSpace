@@ -50,4 +50,22 @@ describe('assertProductionSecrets', () => {
       }),
     ).toThrow(/WEB_ORIGIN/);
   });
+  it.each(['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET', 'WEB_ORIGIN'] as const)(
+    'rejects a missing or whitespace-only %s',
+    (key) => {
+      expect(() => assertProductionSecrets({ ...validProduction, [key]: undefined })).toThrow(key);
+      expect(() => assertProductionSecrets({ ...validProduction, [key]: '   ' })).toThrow(key);
+    },
+  );
+
+  it.each([undefined, 'Admin1234'])('warns for an unsafe administrator password %s', (password) => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      assertProductionSecrets({ ...validProduction, ADMIN_PASSWORD: password });
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('ADMIN_PASSWORD'));
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
 });
